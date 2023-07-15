@@ -6,6 +6,8 @@ export type StoreCtxState = {
    FilesListRef: MutableRefObject<HTMLUListElement | null>
    TreeExpandState: Map<string, boolean>
    FocusedTreeItem: FocusedItem
+   shouldShowFolderInput: boolean
+   shouldShowFileInput: boolean
 }
 
 type StoreCtxData = {
@@ -23,6 +25,8 @@ export default function getTreeCtxData(): StoreCtxData {
          item: null,
          target: null,
       },
+      shouldShowFolderInput: false,
+      shouldShowFileInput: false,
    })
 
    const observers = useRef(new Set<() => void>())

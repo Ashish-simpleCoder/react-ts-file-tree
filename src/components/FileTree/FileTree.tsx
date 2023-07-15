@@ -1,5 +1,6 @@
 import type { Folder } from '../../FileTreeContext/Ctx.type'
 import { useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
+import TreeInputContainer from '../TreeInputContainer/TreeInputContainer'
 import Tree from './Tree'
 
 export default function FileTree() {
@@ -9,7 +10,8 @@ export default function FileTree() {
    // console.log(FocusedItem)
 
    return (
-      <section className='tree-container  '>
+      <section>
+         <TreeInputContainer />
          <ul ref={TreeContainerRef} className='w-[300px]'>
             {RootNode && <Tree item={RootNode} />}
          </ul>

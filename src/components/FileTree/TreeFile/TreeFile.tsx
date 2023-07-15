@@ -28,7 +28,7 @@ export default function TreeFile({ file }: { file: File }) {
          <button
             onClick={handleFileClick}
             data-id={file.id}
-            className='folder-folder w-full flex items-end ml-3'
+            className='folder-folder w-full flex items-end ml-3 p-1'
             tabIndex={-1}
          >
             <FileIcon height={'16px'} width={'16px'} className='mr-2' />

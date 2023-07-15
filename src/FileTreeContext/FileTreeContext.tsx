@@ -1,9 +1,15 @@
-import { ReactNode, createContext, useContext, useInsertionEffect, useLayoutEffect } from 'react'
+import { MouseEvent, ReactNode, createContext, useContext, useInsertionEffect, useLayoutEffect } from 'react'
 import getTreeCtxData from './getTreeCtxData'
+import { Folder } from './Ctx.type'
 
 const TreeCtx = createContext<
    | (ReturnType<typeof getTreeCtxData> & {
-        actions: { collapseFolder: (id: string) => void; expandFolder: (id: string) => void }
+        actions: {
+           collapseFolder: (id: string) => void
+           expandFolder: (id: string) => void
+           toggleFolderInputVisibility: (e: MouseEvent<HTMLButtonElement>) => void
+           toggleFileInputVisibility: (e: MouseEvent<HTMLButtonElement>) => void
+        }
      })
    | null
 >(null)
@@ -15,21 +21,38 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
    const state = getTreeCtxData()
 
    const expandFolder = (folderId?: string) => {
-      const id = folderId
+      const id = folderId || state.get().FocusedTreeItem.item?.id
       if (!id) return
 
       state.set((state) => {
-         state.TreeExpandState.set(folderId, true)
+         state.TreeExpandState.set(id, true)
          return state
       })
    }
 
    const collapseFolder = (folderId?: string) => {
-      const id = folderId
+      const id = folderId || state.get().FocusedTreeItem.item?.id
       if (!id) return
 
       state.set((state) => {
-         state.TreeExpandState.set(folderId, false)
+         state.TreeExpandState.set(id, false)
+         return state
+      })
+   }
+
+   const toggleFolderInputVisibility = (_e: MouseEvent<HTMLButtonElement>) => {
+      expandFolder()
+      state.set((state) => {
+         state.shouldShowFolderInput = !state.shouldShowFolderInput
+         state.shouldShowFileInput = false
+         return state
+      })
+   }
+   const toggleFileInputVisibility = (_e: MouseEvent<HTMLButtonElement>) => {
+      expandFolder()
+      state.set((state) => {
+         state.shouldShowFileInput = !state.shouldShowFileInput
+         state.shouldShowFolderInput = false
          return state
       })
    }
@@ -49,11 +72,21 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
          state.Files.set('3', { id: '3', childrenIds: [], isFolder: true, name: 'elixier', parentId: 'root' })
 
          state.Files.set('5', { id: '5', isFolder: false, name: 'ReactJS', parentId: '0' })
+
+         // setting
+         state.FocusedTreeItem.item = state.Files.get('root') as Folder
          return state
       }, false)
    }, [])
 
    return (
-      <TreeCtx.Provider value={{ ...state, actions: { expandFolder, collapseFolder } }}>{children}</TreeCtx.Provider>
+      <TreeCtx.Provider
+         value={{
+            ...state,
+            actions: { expandFolder, collapseFolder, toggleFolderInputVisibility, toggleFileInputVisibility },
+         }}
+      >
+         {children}
+      </TreeCtx.Provider>
    )
 }
