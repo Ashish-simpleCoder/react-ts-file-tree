@@ -16,8 +16,18 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
 
    const handleFolderClick = (e: MouseEvent<HTMLElement>) => {
       treeDispatch((state) => {
+         if (state.FocusedTreeItem.item?.id != folder.id) {
+            // adding the high-light class to current focused item
+            e.currentTarget.classList.add('bg-black')
+            // removing the high-light class from old-focused item
+            // @ts-ignore
+            state.FocusedTreeItem.target?.classList.remove('bg-black')
+         } else {
+            // @ts-ignore
+            e.target.classList.add('bg-black')
+         }
          state.FocusedTreeItem.item = folder
-         state.FocusedTreeItem.target = e.target
+         state.FocusedTreeItem.target = e.currentTarget
          return state
       }, false)
       if (isFolderExpanded) {
@@ -32,7 +42,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
          <button
             onClick={handleFolderClick}
             data-id={folder.id}
-            className='folder-folder w-full flex items-end'
+            className='folder-folder w-full flex items-end p-1'
             tabIndex={-1}
          >
             {folder.childrenIds.length > 0 && (

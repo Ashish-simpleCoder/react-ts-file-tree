@@ -1,4 +1,4 @@
-import { ReactNode, createContext, useContext, useLayoutEffect } from 'react'
+import { ReactNode, createContext, useContext, useInsertionEffect, useLayoutEffect } from 'react'
 import getTreeCtxData from './getTreeCtxData'
 
 const TreeCtx = createContext<
@@ -34,7 +34,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
       })
    }
 
-   useLayoutEffect(() => {
+   useInsertionEffect(() => {
       state.set((state) => {
          state.Files.set('root', {
             id: 'root',
@@ -50,7 +50,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
 
          state.Files.set('5', { id: '5', isFolder: false, name: 'ReactJS', parentId: '0' })
          return state
-      })
+      }, false)
    }, [])
 
    return (
