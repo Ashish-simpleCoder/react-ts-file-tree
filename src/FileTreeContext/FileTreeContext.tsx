@@ -1,6 +1,7 @@
 import { MouseEvent, ReactNode, createContext, useContext, useInsertionEffect } from 'react'
 import getTreeCtxData from './getTreeCtxData'
-import { Folder } from './Ctx.type'
+import { File, Folder } from './Ctx.type'
+import { PartialBy } from '../types/types'
 
 const TreeCtx = createContext<
    | (ReturnType<typeof getTreeCtxData> & {
@@ -11,6 +12,8 @@ const TreeCtx = createContext<
            toggleFileInputVisibility: (e: MouseEvent<HTMLButtonElement>) => void
            deleteFile: (id: string) => void
            deleteFolder: (id: string) => void
+           createFile: (file: PartialBy<File, 'isFolder' | 'id' | 'parentId'>) => void
+           createFolder: (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId'>) => void
         }
      })
    | null
@@ -22,6 +25,7 @@ export const useTreeCtx = () => useContext(TreeCtx)
 export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
    const state = getTreeCtxData()
 
+   // toggle-collapse api ------------------------------------------
    const expandFolder = (folderId?: string) => {
       const id = folderId || state.get().FocusedTreeItem.item?.id
       if (!id) return
@@ -50,6 +54,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
          return state
       })
    }
+
    const toggleFileInputVisibility = (_e: MouseEvent<HTMLButtonElement>) => {
       expandFolder()
       state.set((state) => {
@@ -58,13 +63,43 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
          return state
       })
    }
+   // toggle-collapse api ------------------------------------------
 
+   // add-item api ------------------------------------------
+   const createFile = (file: PartialBy<File, 'isFolder' | 'id' | 'parentId'>) => {
+      if (!file.parentId && !state.get().FocusedTreeItem.item?.id) return
+      file.isFolder = false
+
+      state.set((state) => {
+         const id = file.id ?? Date.now().toString()
+         state.Files.set(id, { ...file, id } as File)
+         ;(state.Files.get(file.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds.push(id)
+         return state
+      })
+   }
+
+   const createFolder = (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId'>) => {
+      if (!folder.parentId && !state.get().FocusedTreeItem.item?.id) return
+
+      folder.isFolder = true
+
+      const id = folder.id ?? Date.now().toString()
+      state.set((state) => {
+         state.Files.set(id, { ...folder, id } as Folder)
+         ;(state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds.push(id)
+         return state
+      })
+   }
+   // add-item api ------------------------------------------
+
+   // delete api -------------------------------------------
    const deleteItem = (id: string) => {
       state.set((state) => {
          state.Files.delete(id)
          return state
       })
    }
+
    const deleteChildren = (ids: string[]) => {
       if (!ids || ids.length == 0) return
       ids.forEach((id) => {
@@ -75,6 +110,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
          deleteItem(id)
       })
    }
+
    const deleteFolder = (id: string) => {
       const item = state.get().Files.get(id) as Folder
       if (!item) return
@@ -101,7 +137,9 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
          return state
       })
    }
+   // delete api -------------------------------------------
 
+   // initial data insertion
    useInsertionEffect(() => {
       state.set((state) => {
          state.Files.set('root', {
@@ -136,6 +174,8 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
                toggleFileInputVisibility,
                deleteFolder,
                deleteFile,
+               createFile,
+               createFolder,
             },
          }}
       >
