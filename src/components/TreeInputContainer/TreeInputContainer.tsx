@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
 import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
@@ -10,6 +10,17 @@ export default function TreeInputContainer() {
    const shouldShowFileInput = useTreeCtxStateSelector((state) => state.shouldShowFileInput)
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
+
+   useEffect(() => {
+      return () => {
+         if (!shouldShowFileInput) {
+            fileInputRef.current!.value = ''
+         }
+         if (!shouldShowFolderInput) {
+            folderInputRef.current!.value = ''
+         }
+      }
+   }, [shouldShowFileInput, shouldShowFolderInput])
 
    useEventListener(document, 'keyup', (e) => {
       if (e.key != 'Enter') return
