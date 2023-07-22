@@ -15,7 +15,7 @@ export default function TreeFile({ file }: { file: File }) {
             state.FocusedTreeItem.target?.classList.remove('bg-black')
          } else {
             // @ts-ignore
-            e.target.classList.add('bg-black')
+            e.currentTarget.classList.add('bg-black')
          }
          state.FocusedTreeItem.item = file
          state.FocusedTreeItem.target = e.currentTarget

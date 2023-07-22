@@ -25,7 +25,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
             state.FocusedTreeItem.target?.classList.remove('bg-black')
          } else {
             // @ts-ignore
-            e.target.classList.add('bg-black')
+            e.currentTarget.classList.add('bg-black')
          }
          state.FocusedTreeItem.item = folder
          state.FocusedTreeItem.target = e.currentTarget
