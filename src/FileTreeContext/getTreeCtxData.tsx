@@ -45,7 +45,6 @@ export default function getTreeCtxData(): StoreCtxData {
             StoreData.current = value(StoreData.current)
          }
          if (notify) {
-            console.log(notify)
             // notifying all of the observers
             observers.current.forEach((observer) => observer())
          }
