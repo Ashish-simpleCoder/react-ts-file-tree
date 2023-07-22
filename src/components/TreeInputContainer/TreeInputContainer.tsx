@@ -1,12 +1,31 @@
-import { useEffect } from 'react'
+import { useRef } from 'react'
 import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
 import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
+import { useEventListener } from '../../hooks/useEventListener'
 
 export default function TreeInputContainer() {
-   const { toggleFolderInputVisibility, toggleFileInputVisibility } = useContextActions()
+   const { toggleFolderInputVisibility, toggleFileInputVisibility, createFile, createFolder } = useContextActions()
    const shouldShowFolderInput = useTreeCtxStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useTreeCtxStateSelector((state) => state.shouldShowFileInput)
+   const fileInputRef = useRef<HTMLInputElement>(null)
+   const folderInputRef = useRef<HTMLInputElement>(null)
+
+   useEventListener(document, 'keyup', (e) => {
+      if (e.key != 'Enter') return
+      if (!shouldShowFileInput && !shouldShowFolderInput) return
+
+      if (shouldShowFileInput) {
+         const name = fileInputRef.current?.value
+         if (!name) return
+         createFile({ name })
+      }
+      if (shouldShowFolderInput) {
+         const name = folderInputRef.current?.value
+         if (!name) return
+         createFolder({ name })
+      }
+   })
 
    return (
       <div>
@@ -16,28 +35,15 @@ export default function TreeInputContainer() {
          <button onClick={toggleFileInputVisibility} title='create file'>
             <FileIcon />
          </button>
-         {shouldShowFolderInput && (
-            <div className='flex items-center'>
-               <FolderIcon className='mr-2' />
-               <input
-                  // ref={(node) => node && inputRefs.current.set('file-input-ref', node)}
-                  // style={{ display: shouldShowFolderInput ? 'block' : 'none', zIndex: '2' }}
-                  className='z-10 p-1'
-                  placeholder='new folder'
-               />
-            </div>
-         )}
-         {shouldShowFileInput && (
-            <div className='flex items-center'>
-               <FileIcon className='mr-2' />
-               <input
-                  // ref={(node) => node && inputRefs.current.set('file-input-ref', node)}
-                  // style={{ display: shouldShowFolderInput ? 'block' : 'none', zIndex: '2' }}
-                  className='z-10 p-1'
-                  placeholder='new file'
-               />
-            </div>
-         )}
+
+         <div className={`flex items-center ${shouldShowFileInput ? '' : 'hidden'}`}>
+            <FileIcon className='mr-2' />
+            <input className='z-10 p-1' placeholder='new file' ref={fileInputRef} />
+         </div>
+         <div className={`flex items-center ${shouldShowFolderInput ? '' : 'hidden'}`}>
+            <FolderIcon className='mr-2' />
+            <input className='z-10 p-1' placeholder='new folder' ref={folderInputRef} />
+         </div>
       </div>
    )
 }

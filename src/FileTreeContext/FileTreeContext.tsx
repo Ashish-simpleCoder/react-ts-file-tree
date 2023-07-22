@@ -13,7 +13,7 @@ const TreeCtx = createContext<
            deleteFile: (id: string) => void
            deleteFolder: (id: string) => void
            createFile: (file: PartialBy<File, 'isFolder' | 'id' | 'parentId'>) => void
-           createFolder: (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId'>) => void
+           createFolder: (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds'>) => void
         }
      })
    | null
@@ -73,20 +73,30 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
       state.set((state) => {
          const id = file.id ?? Date.now().toString()
          state.Files.set(id, { ...file, id } as File)
-         ;(state.Files.get(file.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds.push(id)
+         ;(state.Files.get(file.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds = [
+            ...(state.Files.get(file.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds,
+            id,
+         ]
          return state
       })
    }
 
-   const createFolder = (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId'>) => {
+   const createFolder = (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds'>) => {
       if (!folder.parentId && !state.get().FocusedTreeItem.item?.id) return
 
       folder.isFolder = true
+      folder.childrenIds = folder.childrenIds ?? []
 
       const id = folder.id ?? Date.now().toString()
       state.set((state) => {
          state.Files.set(id, { ...folder, id } as Folder)
-         ;(state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds.push(id)
+         ;(state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds = [
+            ...(state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds,
+            id,
+         ]
+         // const p = new Map(state.Files)
+         // console.log(p)
+         // state.Files = Map(state.Files)
          return state
       })
    }

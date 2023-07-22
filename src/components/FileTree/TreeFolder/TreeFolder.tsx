@@ -1,5 +1,5 @@
 import type { Folder } from '../../../FileTreeContext/Ctx.type'
-import type { MouseEvent, SVGProps } from 'react'
+import { type MouseEvent, type SVGProps } from 'react'
 
 import {
    useContextActions,
@@ -12,6 +12,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
    const { collapseFolder, expandFolder } = useContextActions()
    const treeDispatch = useTreeStateDispatch()
    const isFolderExpanded = useTreeCtxStateSelector((state) => state.TreeExpandState.get(folder.id))
+   const childrenIds = useTreeCtxStateSelector((state) => (state.Files.get(folder.id) as Folder).childrenIds)
    const Files = useTreeCtxStateSelector((state) => state.Files)
 
    const handleFolderClick = (e: MouseEvent<HTMLElement>) => {
@@ -45,7 +46,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
             className='folder-folder w-full flex items-end p-1'
             tabIndex={-1}
          >
-            {folder.childrenIds.length > 0 && (
+            {childrenIds.length > 0 && (
                <RightAngledArrow rotate={isFolderExpanded ? '90deg' : '0deg'} height={'16px'} width={'16px'} />
             )}
             <FolderIcon height={'16px'} width={'16px'} className='mr-2' />
@@ -53,7 +54,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
          </button>
          {isFolderExpanded && (
             <ul>
-               {folder.childrenIds.map((child_id) => {
+               {childrenIds.map((child_id) => {
                   const node = Files.get(child_id)
                   if (node) {
                      return <Tree key={child_id} item={node} />
