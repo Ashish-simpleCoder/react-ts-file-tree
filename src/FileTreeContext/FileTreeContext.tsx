@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode, createContext, useContext, useInsertionEffect, useLayoutEffect } from 'react'
+import { MouseEvent, ReactNode, createContext, useContext, useInsertionEffect } from 'react'
 import getTreeCtxData from './getTreeCtxData'
 import { File, Folder } from './Ctx.type'
 import { PartialBy } from '../types/types'
@@ -155,7 +155,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
    // delete api -------------------------------------------
 
    // initial data insertion
-   useLayoutEffect(() => {
+   useInsertionEffect(() => {
       state.set((state) => {
          state.Files.set('root', {
             id: 'root',
