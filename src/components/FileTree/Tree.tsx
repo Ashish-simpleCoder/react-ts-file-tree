@@ -6,7 +6,7 @@ export default function Tree({ item }: { item: File | Folder }) {
    if (!item) return null
    return (
       <>
-         <li style={{ paddingLeft: '20px' }}>
+         <li className={item.id != 'root' ? 'pl-4' : ''}>
             {item.isFolder && <TreeFolder folder={item as Folder} />}
             {!item.isFolder && <TreeFile file={item} />}
          </li>

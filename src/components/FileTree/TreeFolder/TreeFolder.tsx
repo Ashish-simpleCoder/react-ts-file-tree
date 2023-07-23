@@ -17,6 +17,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
 
    const handleFolderClick = (e: MouseEvent<HTMLElement>) => {
       treeDispatch((state) => {
+         state.showTreeContextMenu = false
          if (state.FocusedTreeItem.item?.id != folder.id) {
             // adding the high-light class to current focused item
             e.currentTarget.classList.add('bg-black')
@@ -47,10 +48,15 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
             tabIndex={-1}
          >
             {childrenIds.length > 0 && (
-               <RightAngledArrow rotate={isFolderExpanded ? '90deg' : '0deg'} height={'16px'} width={'16px'} />
+               <RightAngledArrow
+                  rotate={isFolderExpanded ? '90deg' : '0deg'}
+                  height={'16px'}
+                  width={'16px'}
+                  className='pointer-events-none'
+               />
             )}
-            <FolderIcon height={'16px'} width={'16px'} className='mr-2' />
-            <span className='leading-5'>{folder.name}</span>
+            <FolderIcon height={'16px'} width={'16px'} className='mr-2 pointer-events-none' />
+            <span className='leading-5 pointer-events-none'>{folder.name}</span>
          </button>
          {isFolderExpanded && (
             <ul>
