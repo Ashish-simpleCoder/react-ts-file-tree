@@ -7,6 +7,7 @@ export default function TreeFile({ file }: { file: File }) {
 
    const handleFileClick = (e: MouseEvent<HTMLElement>) => {
       treeDispatch((state) => {
+         state.showTreeContextMenu = false
          if (state.FocusedTreeItem.item?.id != file.id) {
             // adding the high-light class to current focused item
             e.currentTarget.classList.add('bg-black')
@@ -31,9 +32,9 @@ export default function TreeFile({ file }: { file: File }) {
             className='folder-folder w-full flex items-end p-1'
             tabIndex={-1}
          >
-            <FileIcon height={'16px'} width={'16px'} className='mr-2' />
+            <FileIcon height={'16px'} width={'16px'} className='mr-2 pointer-events-none' />
 
-            <span className='leading-5'>{file.name}</span>
+            <span className='leading-5 pointer-events-none'>{file.name}</span>
          </button>
       </>
    )

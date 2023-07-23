@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode, createContext, useContext, useInsertionEffect } from 'react'
+import { MouseEvent, ReactNode, createContext, useContext, useInsertionEffect, useLayoutEffect } from 'react'
 import getTreeCtxData from './getTreeCtxData'
 import { File, Folder } from './Ctx.type'
 import { PartialBy } from '../types/types'
@@ -131,6 +131,10 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
       state.set((state) => {
          const parent = state.Files.get(item.parentId) as Folder
          ;(state.Files.get(item.parentId) as Folder).childrenIds.splice(parent.childrenIds.indexOf(id), 1)
+         ;(state.Files.get(item.parentId) as Folder).childrenIds = [
+            ...(state.Files.get(item.parentId) as Folder).childrenIds,
+         ]
+
          return state
       })
    }
@@ -144,13 +148,14 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
       state.set((state) => {
          const parent = state.Files.get(parentId) as Folder
          ;(state.Files.get(parentId) as Folder).childrenIds.splice(parent.childrenIds.indexOf(id), 1)
+         ;(state.Files.get(parentId) as Folder).childrenIds = [...(state.Files.get(parentId) as Folder).childrenIds]
          return state
       })
    }
    // delete api -------------------------------------------
 
    // initial data insertion
-   useInsertionEffect(() => {
+   useLayoutEffect(() => {
       state.set((state) => {
          state.Files.set('root', {
             id: 'root',

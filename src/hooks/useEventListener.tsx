@@ -7,25 +7,29 @@ export function useEventListener<K extends keyof DocumentEventMap>(
    target: Target,
    event: K,
    handler?: (event: DocumentEventMap[K]) => void,
-   options?: Options
+   options?: Options,
+   shouldAddEvent?: boolean
 ): VoidFunction
 export function useEventListener<K extends keyof WindowEventMap>(
    target: Target,
    event: K,
    handler?: (event: WindowEventMap[K]) => void,
-   options?: Options
+   options?: Options,
+   shouldAddEvent?: boolean
 ): VoidFunction
 export function useEventListener<K extends keyof GlobalEventHandlersEventMap>(
    target: Target,
    event: K,
    handler?: (event: GlobalEventHandlersEventMap[K]) => void,
-   options?: Options
+   options?: Options,
+   shouldAddEvent?: boolean
 ): VoidFunction
 export function useEventListener(
    target: Target,
    event: string,
    handler: ((event: Event) => void) | undefined,
-   options?: Options
+   options?: Options,
+   shouldAddEvent: boolean = true
 ) {
    const listener = useCallbackRef(handler)
 
@@ -34,11 +38,15 @@ export function useEventListener(
 
       if (!handler || !node) return
 
-      node.addEventListener(event, listener, options)
+      if (shouldAddEvent) {
+         node.addEventListener(event, listener, options)
+      } else {
+         node.removeEventListener(event, listener, options)
+      }
       return () => {
          node.removeEventListener(event, listener, options)
       }
-   }, [event, target, options, listener, handler])
+   }, [event, target, options, listener, handler, shouldAddEvent])
 
    return () => {
       const node = typeof target === 'function' ? target() : target ?? document

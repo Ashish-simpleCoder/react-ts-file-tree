@@ -8,6 +8,7 @@ export type StoreCtxState = {
    FocusedTreeItem: FocusedItem
    shouldShowFolderInput: boolean
    shouldShowFileInput: boolean
+   showTreeContextMenu: boolean
 }
 
 type StoreCtxData = {
@@ -27,6 +28,7 @@ export default function getTreeCtxData(): StoreCtxData {
       },
       shouldShowFolderInput: false,
       shouldShowFileInput: false,
+      showTreeContextMenu: false,
    })
 
    const observers = useRef(new Set<() => void>())
