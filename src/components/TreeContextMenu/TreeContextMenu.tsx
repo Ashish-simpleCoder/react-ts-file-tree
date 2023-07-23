@@ -1,12 +1,20 @@
 import { flushSync } from 'react-dom'
 import { useEventListener } from '../../hooks/useEventListener'
-import { useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
+import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 
 export default function TreeContextMenu() {
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
    const Files = useTreeCtxStateSelector((state) => state.Files, false)
    const showTreeContextMenu = useTreeCtxStateSelector((state) => state.showTreeContextMenu)
+   const { deleteFile, deleteFolder } = useContextActions()
    const TreeActionDispatch = useTreeStateDispatch()
+
+   const closeContextMenu = () => {
+      TreeActionDispatch((state) => {
+         state.showTreeContextMenu = false
+         return state
+      })
+   }
 
    useEventListener(window, 'contextmenu', (e) => {
       e.preventDefault()
@@ -81,11 +89,28 @@ export default function TreeContextMenu() {
                            <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'>
                               <span>New Folder</span>
                            </li>
+                           <li
+                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
+                              onClick={() => {
+                                 deleteFolder(FocusedItem.id)
+                                 closeContextMenu()
+                              }}
+                           >
+                              <span>Delete</span>
+                           </li>
                         </>
                      )}
-                     <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'>
-                        <span>Delete</span>
-                     </li>
+                     {!FocusedItem?.isFolder && (
+                        <li
+                           className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
+                           onClick={() => {
+                              FocusedItem && deleteFile(FocusedItem.id)
+                              closeContextMenu
+                           }}
+                        >
+                           <span>Delete</span>
+                        </li>
+                     )}
                   </ul>
                </div>
                {/* <div className='tree-context-menu-overlay fixed inset-0'></div> */}
