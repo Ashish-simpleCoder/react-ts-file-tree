@@ -1,6 +1,7 @@
 import { flushSync } from 'react-dom'
 import { useEventListener } from '../../hooks/useEventListener'
 import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
+import useKeyListener from '../../hooks/useKeyListener'
 
 export default function TreeContextMenu() {
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
@@ -20,7 +21,15 @@ export default function TreeContextMenu() {
       e.preventDefault()
 
       TreeActionDispatch((state) => {
-         const item = Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)!
+         const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)!
+
+         // when context is opened on File-Tree container not on files
+         if (!item) {
+            // @ts-ignore
+            state.FocusedTreeItem.target?.classList.remove("bg-black")
+            state.FocusedTreeItem = { item: state.Files.get("root")!, target: document.querySelector("button[data-id=root]") }
+            return state
+         }
          if (state.FocusedTreeItem.item?.id != item.id) {
             // @ts-ignore
             e.target.classList.add('bg-black')
@@ -72,6 +81,16 @@ export default function TreeContextMenu() {
       showTreeContextMenu
    )
 
+   useKeyListener("keydown", ["Delete"], (e) => {
+      const id = (e.target as HTMLElement).getAttribute("data-id")
+      if (!id) return
+
+      const isFolder = Files.get(id)?.isFolder
+      if (isFolder) return deleteFolder(id)
+
+      deleteFile(id)
+   }, { shouldAddEvent: true })
+
    return (
       <>
          {showTreeContextMenu && (
@@ -90,25 +109,27 @@ export default function TreeContextMenu() {
                               <span>New Folder</span>
                            </li>
                            <li
-                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
+                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                               onClick={() => {
                                  deleteFolder(FocusedItem.id)
                                  closeContextMenu()
                               }}
                            >
                               <span>Delete</span>
+                              <span>del</span>
                            </li>
                         </>
                      )}
                      {!FocusedItem?.isFolder && (
                         <li
-                           className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
+                           className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                            onClick={() => {
                               FocusedItem && deleteFile(FocusedItem.id)
                               closeContextMenu
                            }}
                         >
                            <span>Delete</span>
+                           <span>del</span>
                         </li>
                      )}
                   </ul>
