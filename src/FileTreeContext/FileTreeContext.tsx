@@ -101,12 +101,19 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
       file.isFolder = false
 
       const id = file.id ?? Date.now().toString()
+
       state.set((state) => {
-         state.Files.set(id, { ...file, id } as File)
-            ; (state.Files.get(file.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds = [
-               ...(state.Files.get(file.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds,
-               id,
-            ]
+         let parentItem = state.Files.get(file.parentId || state.FocusedTreeItem.item!.id || "root")!
+         
+         if (!parentItem?.isFolder && parentItem?.parentId) {
+            parentItem = state.Files.get(parentItem?.parentId)!
+         }
+         state.Files.set(id, { ...file, id,parentId: parentItem.id } as File);
+
+         (state.Files.get(parentItem.id) as Folder).childrenIds = [
+            ...(parentItem as Folder).childrenIds,
+            id,
+         ]
          return state
       })
       return id
@@ -119,12 +126,19 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
       folder.childrenIds = folder.childrenIds ?? []
 
       const id = folder.id ?? Date.now().toString()
+
       state.set((state) => {
-         state.Files.set(id, { ...folder, id } as Folder)
-            ; (state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds = [
-               ...(state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds,
-               id,
-            ]
+         let parentItem = state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id || "root")!
+         
+         if (!parentItem?.isFolder && parentItem?.parentId) {
+            parentItem = state.Files.get(parentItem?.parentId)!
+         }
+         state.Files.set(id, { ...folder, id,parentId: parentItem.id } as Folder)
+
+         ; (state.Files.get(parentItem.id) as Folder).childrenIds = [
+            ...(parentItem as Folder).childrenIds,
+            id,
+         ]
          // const p = new Map(state.Files)
          // console.log(p)
          // state.Files = Map(state.Files)
@@ -195,7 +209,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
 
       target.classList.add("bg-black")
       // @ts-ignore
-      
+
       state.set(state => {
          // @ts-ignore
          state.FocusedTreeItem?.target?.classList.remove("bg-black")
