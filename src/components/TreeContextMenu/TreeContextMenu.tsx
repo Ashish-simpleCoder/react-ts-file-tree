@@ -26,8 +26,11 @@ export default function TreeContextMenu() {
          // when context is opened on File-Tree container not on files
          if (!item) {
             // @ts-ignore
-            state.FocusedTreeItem.target?.classList.remove("bg-black")
-            state.FocusedTreeItem = { item: state.Files.get("root")!, target: document.querySelector("button[data-id=root]") }
+            state.FocusedTreeItem.target?.classList.remove('bg-black')
+            state.FocusedTreeItem = {
+               item: state.Files.get('root')!,
+               target: document.querySelector('button[data-id=root]'),
+            }
             return state
          }
          if (state.FocusedTreeItem.item?.id != item.id) {
@@ -81,15 +84,20 @@ export default function TreeContextMenu() {
       showTreeContextMenu
    )
 
-   useKeyListener("keydown", ["Delete"], (e) => {
-      const id = (e.target as HTMLElement).getAttribute("data-id")
-      if (!id) return
+   useKeyListener(
+      'keydown',
+      ['Delete'],
+      (e) => {
+         const id = (e.target as HTMLElement).getAttribute('data-id')
+         if (!id) return
 
-      const isFolder = Files.get(id)?.isFolder
-      if (isFolder) return deleteFolder(id)
+         const isFolder = Files.get(id)?.isFolder
+         if (isFolder) return deleteFolder(id)
 
-      deleteFile(id)
-   }, { shouldAddEvent: true })
+         deleteFile(id)
+      },
+      { shouldAddEvent: true }
+   )
 
    return (
       <>
@@ -125,7 +133,7 @@ export default function TreeContextMenu() {
                            className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                            onClick={() => {
                               FocusedItem && deleteFile(FocusedItem.id)
-                              closeContextMenu
+                              closeContextMenu()
                            }}
                         >
                            <span>Delete</span>

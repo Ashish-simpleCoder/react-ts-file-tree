@@ -3,7 +3,7 @@ import { useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeCon
 import { useEventListener } from '../../hooks/useEventListener'
 import TreeContextMenu from '../TreeContextMenu/TreeContextMenu'
 import TreeInputContainer from '../TreeInputContainer/TreeInputContainer'
-import Tree from './Tree'
+import TreeFolder from './TreeFolder/TreeFolder'
 
 export default function FileTree() {
    const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
@@ -27,7 +27,8 @@ export default function FileTree() {
       <section className='h-[100vh] w-64 border border-gray-700 bg-gray-900 p-'>
          <TreeInputContainer />
          <ul ref={TreeContainerRef} className='w-full'>
-            {RootNode && <Tree item={RootNode} />}
+            {/* {RootNode && <Tree item={RootNode} />} */}
+            {RootNode && <TreeFolder folder={RootNode} />}
          </ul>
          <TreeContextMenu />
       </section>

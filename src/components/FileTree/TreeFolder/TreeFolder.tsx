@@ -41,23 +41,25 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
 
    return (
       <>
-         <button
-            onClick={handleFolderClick}
-            data-id={folder.id}
-            className='folder-folder w-full flex items-end p-1'
-            tabIndex={-1}
-         >
-            {childrenIds.length > 0 && (
-               <RightAngledArrow
-                  rotate={isFolderExpanded ? '90deg' : '0deg'}
-                  height={'16px'}
-                  width={'16px'}
-                  className='pointer-events-none'
-               />
-            )}
-            <FolderIcon height={'16px'} width={'16px'} className='mr-2 pointer-events-none' />
-            <span className='leading-5 pointer-events-none'>{folder.name}</span>
-         </button>
+         {folder.id != 'root' && (
+            <button
+               onClick={handleFolderClick}
+               data-id={folder.id}
+               className='folder-folder w-full flex items-end p-1'
+               tabIndex={-1}
+            >
+               {childrenIds.length > 0 && (
+                  <RightAngledArrow
+                     rotate={isFolderExpanded ? '90deg' : '0deg'}
+                     height={'16px'}
+                     width={'16px'}
+                     className='pointer-events-none'
+                  />
+               )}
+               <FolderIcon height={'16px'} width={'16px'} className='mr-2 pointer-events-none' />
+               <span className='leading-5 pointer-events-none'>{folder.name}</span>
+            </button>
+         )}
          {isFolderExpanded && (
             <ul>
                {childrenIds.map((child_id) => {
