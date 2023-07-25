@@ -3,15 +3,23 @@ import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContex
 import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
 import { useEventListener } from '../../hooks/useEventListener'
+import { flushSync } from 'react-dom'
 
 export default function TreeInputContainer() {
-   const { toggleFolderInputVisibility, toggleFileInputVisibility, createFile, createFolder } = useContextActions()
+   const { toggleFolderInputVisibility, toggleFileInputVisibility, createFile, createFolder, hideFileInput, hideFolderInput, highlightFileOrFolder } = useContextActions()
    const shouldShowFolderInput = useTreeCtxStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useTreeCtxStateSelector((state) => state.shouldShowFileInput)
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
 
    useEffect(() => {
+      if (shouldShowFileInput) {
+         fileInputRef.current?.focus()
+      }
+      if (shouldShowFolderInput) {
+         folderInputRef.current?.focus()
+      }
+
       return () => {
          if (!shouldShowFileInput) {
             fileInputRef.current!.value = ''
@@ -22,6 +30,7 @@ export default function TreeInputContainer() {
       }
    }, [shouldShowFileInput, shouldShowFolderInput])
 
+
    useEventListener(document, 'keyup', (e) => {
       if (e.key != 'Enter') return
       if (!shouldShowFileInput && !shouldShowFolderInput) return
@@ -29,12 +38,22 @@ export default function TreeInputContainer() {
       if (shouldShowFileInput) {
          const name = fileInputRef.current?.value
          if (!name) return
-         createFile({ name })
+         let id: string | undefined = ""
+         flushSync(() => {
+            id = createFile({ name })
+         })
+         highlightFileOrFolder(id)
+         hideFileInput()
       }
       if (shouldShowFolderInput) {
          const name = folderInputRef.current?.value
          if (!name) return
-         createFolder({ name })
+         let id: string | undefined = ""
+         flushSync(() => {
+            id = createFolder({ name })
+         })
+         highlightFileOrFolder(id)
+         hideFolderInput()
       }
    })
 
