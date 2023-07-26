@@ -5,24 +5,26 @@ import { PartialBy } from '../types/types'
 
 const TreeCtx = createContext<
    | (ReturnType<typeof getTreeCtxData> & {
-        actions: {
-           collapseFolder: (id: string) => void
-           expandFolder: (id: string) => void
-           toggleFolderInputVisibility: (e?: MouseEvent<HTMLButtonElement>) => void
-           toggleFileInputVisibility: (e?: MouseEvent<HTMLButtonElement>) => void
-           deleteFile: (id: string) => void
-           deleteFolder: (id: string) => void
-           createFile: (file: PartialBy<File, 'isFolder' | 'id' | 'parentId'>) => string | undefined
-           createFolder: (
-              folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds'>
-           ) => string | undefined
-           showFileInput: () => void
-           showFolderInput: () => void
-           hideFileInput: () => void
-           hideFolderInput: () => void
-           highlightFileOrFolder: (id: string) => void
-        }
-     })
+      actions: {
+         collapseFolder: (id: string) => void
+         expandFolder: (id: string) => void
+         toggleFolderInputVisibility: (e?: MouseEvent<HTMLButtonElement>) => void
+         toggleFileInputVisibility: (e?: MouseEvent<HTMLButtonElement>) => void
+         deleteFile: (id: string) => void
+         deleteFolder: (id: string) => void
+         createFile: (file: PartialBy<File, 'isFolder' | 'id' | 'parentId'>) => string | undefined
+         createFolder: (
+            folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds'>
+         ) => string | undefined
+         showFileInput: () => void
+         showFolderInput: () => void
+         hideFileInput: () => void
+         hideFolderInput: () => void
+         highlightFileOrFolder: (id: string) => void
+         collapseTree: () => void
+         refreshTree: () => void
+      }
+   })
    | null
 >(null)
 
@@ -33,6 +35,19 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
    const state = getTreeCtxData()
 
    // toggle-collapse api ------------------------------------------
+   const collapseTree = () => {
+      state.set(state => {
+         state.TreeExpandState.clear()
+         state.TreeExpandState.set('root', true)
+         return state
+      })
+   }
+   const refreshTree = () => {
+      state.set(state => {
+         state.Files = new Map(state.Files)
+         return state
+      })
+   }
    const expandFolder = (folderId?: string) => {
       const id = folderId || state.get().FocusedTreeItem.item?.id
       if (!id) return
@@ -112,7 +127,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
          }
          state.Files.set(id, { ...file, id, parentId: parentItem.id } as File)
 
-         ;(state.Files.get(parentItem.id) as Folder).childrenIds = [...(parentItem as Folder).childrenIds, id]
+            ;(state.Files.get(parentItem.id) as Folder).childrenIds = [...(parentItem as Folder).childrenIds, id]
          return state
       })
       return id
@@ -133,7 +148,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
             parentItem = state.Files.get(parentItem?.parentId)!
          }
          state.Files.set(id, { ...folder, id, parentId: parentItem.id } as Folder)
-         ;(state.Files.get(parentItem.id) as Folder).childrenIds = [...(parentItem as Folder).childrenIds, id]
+            ;(state.Files.get(parentItem.id) as Folder).childrenIds = [...(parentItem as Folder).childrenIds, id]
          // const p = new Map(state.Files)
          // console.log(p)
          // state.Files = Map(state.Files)
@@ -171,10 +186,10 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
 
       state.set((state) => {
          const parent = state.Files.get(item.parentId) as Folder
-         ;(state.Files.get(item.parentId) as Folder).childrenIds.splice(parent.childrenIds.indexOf(id), 1)
-         ;(state.Files.get(item.parentId) as Folder).childrenIds = [
-            ...(state.Files.get(item.parentId) as Folder).childrenIds,
-         ]
+            ;(state.Files.get(item.parentId) as Folder).childrenIds.splice(parent.childrenIds.indexOf(id), 1)
+            ;(state.Files.get(item.parentId) as Folder).childrenIds = [
+               ...(state.Files.get(item.parentId) as Folder).childrenIds,
+            ]
 
          return state
       })
@@ -188,8 +203,8 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
 
       state.set((state) => {
          const parent = state.Files.get(parentId) as Folder
-         ;(state.Files.get(parentId) as Folder).childrenIds.splice(parent.childrenIds.indexOf(id), 1)
-         ;(state.Files.get(parentId) as Folder).childrenIds = [...(state.Files.get(parentId) as Folder).childrenIds]
+            ;(state.Files.get(parentId) as Folder).childrenIds.splice(parent.childrenIds.indexOf(id), 1)
+            ;(state.Files.get(parentId) as Folder).childrenIds = [...(state.Files.get(parentId) as Folder).childrenIds]
          return state
       })
    }
@@ -260,6 +275,8 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
                hideFileInput,
                hideFolderInput,
                highlightFileOrFolder,
+               collapseTree,
+               refreshTree
             },
          }}
       >

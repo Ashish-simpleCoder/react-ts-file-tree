@@ -31,7 +31,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
          state.FocusedTreeItem.item = folder
          state.FocusedTreeItem.target = e.currentTarget
          return state
-      }, false)
+      })
       if (isFolderExpanded) {
          collapseFolder(folder.id)
       } else {

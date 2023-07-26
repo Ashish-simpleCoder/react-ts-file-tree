@@ -21,7 +21,7 @@ export default function TreeFile({ file }: { file: File }) {
          state.FocusedTreeItem.item = file
          state.FocusedTreeItem.target = e.currentTarget
          return state
-      }, false)
+      })
    }
 
    return (
