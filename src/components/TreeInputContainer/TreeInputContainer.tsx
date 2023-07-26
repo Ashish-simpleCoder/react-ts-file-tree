@@ -6,7 +6,15 @@ import { useEventListener } from '../../hooks/useEventListener'
 import { flushSync } from 'react-dom'
 
 export default function TreeInputContainer() {
-   const { toggleFolderInputVisibility, toggleFileInputVisibility, createFile, createFolder, hideFileInput, hideFolderInput, highlightFileOrFolder } = useContextActions()
+   const {
+      toggleFolderInputVisibility,
+      toggleFileInputVisibility,
+      createFile,
+      createFolder,
+      hideFileInput,
+      hideFolderInput,
+      highlightFileOrFolder,
+   } = useContextActions()
    const shouldShowFolderInput = useTreeCtxStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useTreeCtxStateSelector((state) => state.shouldShowFileInput)
    const fileInputRef = useRef<HTMLInputElement>(null)
@@ -30,7 +38,6 @@ export default function TreeInputContainer() {
       }
    }, [shouldShowFileInput, shouldShowFolderInput])
 
-
    useEventListener(document, 'keyup', (e) => {
       if (e.key != 'Enter') return
       if (!shouldShowFileInput && !shouldShowFolderInput) return
@@ -38,7 +45,7 @@ export default function TreeInputContainer() {
       if (shouldShowFileInput) {
          const name = fileInputRef.current?.value
          if (!name) return
-         let id: string | undefined = ""
+         let id: string | undefined = ''
          flushSync(() => {
             id = createFile({ name })
          })
@@ -48,7 +55,7 @@ export default function TreeInputContainer() {
       if (shouldShowFolderInput) {
          const name = folderInputRef.current?.value
          if (!name) return
-         let id: string | undefined = ""
+         let id: string | undefined = ''
          flushSync(() => {
             id = createFolder({ name })
          })
@@ -58,21 +65,29 @@ export default function TreeInputContainer() {
    })
 
    return (
-      <div>
-         <button onClick={toggleFolderInputVisibility} title='create file'>
-            <FolderIcon />
-         </button>
-         <button onClick={toggleFileInputVisibility} title='create file'>
-            <FileIcon />
-         </button>
+      <div className='py-2'>
+         <div className='px-2 flex justify-end gap-1'>
+            <button onClick={toggleFolderInputVisibility} title='create folder'>
+               <FolderIcon />
+            </button>
+            <button onClick={toggleFileInputVisibility} title='create file'>
+               <FileIcon />
+            </button>
+            <button onClick={() => {}} title='create file'>
+               ref
+            </button>
+            <button onClick={() => {}} title='create file'>
+               collp
+            </button>
+         </div>
 
          <div className={`flex items-center ${shouldShowFileInput ? '' : 'hidden'}`}>
             <FileIcon className='mr-2' />
-            <input className='z-10 p-1' placeholder='new file' ref={fileInputRef} />
+            <input className='z-10 p-1 h-7 outline-none focus:border' placeholder='new file' ref={fileInputRef} />
          </div>
          <div className={`flex items-center ${shouldShowFolderInput ? '' : 'hidden'}`}>
             <FolderIcon className='mr-2' />
-            <input className='z-10 p-1' placeholder='new folder' ref={folderInputRef} />
+            <input className='z-10 p-1 h-7 outline-none focus:border' placeholder='new folder' ref={folderInputRef} />
          </div>
       </div>
    )
