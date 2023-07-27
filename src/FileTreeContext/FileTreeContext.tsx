@@ -5,17 +5,26 @@ import { PartialBy } from '../types/types'
 
 const TreeCtx = createContext<
    | (ReturnType<typeof getTreeCtxData> & {
-        actions: {
-           collapseFolder: (id: string) => void
-           expandFolder: (id: string) => void
-           toggleFolderInputVisibility: (e: MouseEvent<HTMLButtonElement>) => void
-           toggleFileInputVisibility: (e: MouseEvent<HTMLButtonElement>) => void
-           deleteFile: (id: string) => void
-           deleteFolder: (id: string) => void
-           createFile: (file: PartialBy<File, 'isFolder' | 'id' | 'parentId'>) => void
-           createFolder: (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds'>) => void
-        }
-     })
+      actions: {
+         collapseFolder: (id?: string) => void
+         expandFolder: (id?: string) => void
+         toggleFolderInputVisibility: (e?: MouseEvent<HTMLButtonElement>) => void
+         toggleFileInputVisibility: (e?: MouseEvent<HTMLButtonElement>) => void
+         deleteFile: (id: string) => void
+         deleteFolder: (id: string) => void
+         createFile: (file: PartialBy<File, 'isFolder' | 'id' | 'parentId' | "isRenaming" | "newName">) => string | undefined
+         createFolder: (
+            folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds' | "isRenaming" | "newName">
+         ) => string | undefined
+         showFileInput: () => void
+         showFolderInput: () => void
+         hideFileInput: () => void
+         hideFolderInput: () => void
+         highlightFileOrFolder: (id: string) => void
+         collapseTree: () => void
+         refreshTree: () => void
+      }
+   })
    | null
 >(null)
 
@@ -26,6 +35,19 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
    const state = getTreeCtxData()
 
    // toggle-collapse api ------------------------------------------
+   const collapseTree = () => {
+      state.set(state => {
+         state.TreeExpandState.clear()
+         state.TreeExpandState.set('root', true)
+         return state
+      })
+   }
+   const refreshTree = () => {
+      state.set(state => {
+         state.Files = new Map(state.Files)
+         return state
+      })
+   }
    const expandFolder = (folderId?: string) => {
       const id = folderId || state.get().FocusedTreeItem.item?.id
       if (!id) return
@@ -46,7 +68,32 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
       })
    }
 
-   const toggleFolderInputVisibility = (_e: MouseEvent<HTMLButtonElement>) => {
+   const showFolderInput = () => {
+      state.set((state) => {
+         state.shouldShowFolderInput = true
+         return state
+      })
+   }
+   const hideFolderInput = () => {
+      state.set((state) => {
+         state.shouldShowFolderInput = false
+         return state
+      })
+   }
+   const showFileInput = () => {
+      state.set((state) => {
+         state.shouldShowFileInput = true
+         return state
+      })
+   }
+   const hideFileInput = () => {
+      state.set((state) => {
+         state.shouldShowFileInput = false
+         return state
+      })
+   }
+
+   const toggleFolderInputVisibility = (_e?: MouseEvent<HTMLButtonElement>) => {
       expandFolder()
       state.set((state) => {
          state.shouldShowFolderInput = !state.shouldShowFolderInput
@@ -55,7 +102,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
       })
    }
 
-   const toggleFileInputVisibility = (_e: MouseEvent<HTMLButtonElement>) => {
+   const toggleFileInputVisibility = (_e?: MouseEvent<HTMLButtonElement>) => {
       expandFolder()
       state.set((state) => {
          state.shouldShowFileInput = !state.shouldShowFileInput
@@ -66,39 +113,54 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
    // toggle-collapse api ------------------------------------------
 
    // add-item api ------------------------------------------
-   const createFile = (file: PartialBy<File, 'isFolder' | 'id' | 'parentId'>) => {
+   const createFile = (file: PartialBy<File, 'isFolder' | 'id' | 'parentId' | "isRenaming" | "newName">) => {
+      if (!file.name) return
       if (!file.parentId && !state.get().FocusedTreeItem.item?.id) return
       file.isFolder = false
+      file.isRenaming = false
+      file.newName = file.name
+
+      const id = file.id ?? Date.now().toString()
 
       state.set((state) => {
-         const id = file.id ?? Date.now().toString()
-         state.Files.set(id, { ...file, id } as File)
-         ;(state.Files.get(file.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds = [
-            ...(state.Files.get(file.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds,
-            id,
-         ]
+         let parentItem = state.Files.get(file.parentId || state.FocusedTreeItem.item!.id || 'root')!
+
+         if (!parentItem?.isFolder && parentItem?.parentId) {
+            parentItem = state.Files.get(parentItem?.parentId)!
+         }
+         state.Files.set(id, { ...file, id, parentId: parentItem.id } as File)
+
+            ;(state.Files.get(parentItem.id) as Folder).childrenIds = [...(parentItem as Folder).childrenIds, id]
          return state
       })
+      return id
    }
 
-   const createFolder = (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds'>) => {
+   const createFolder = (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds' | "isRenaming" | "newName">) => {
+      if (!folder.name) return
       if (!folder.parentId && !state.get().FocusedTreeItem.item?.id) return
 
       folder.isFolder = true
       folder.childrenIds = folder.childrenIds ?? []
+      folder.isRenaming = false
+      folder.newName = folder.name
 
       const id = folder.id ?? Date.now().toString()
+
       state.set((state) => {
-         state.Files.set(id, { ...folder, id } as Folder)
-         ;(state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds = [
-            ...(state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id) as Folder).childrenIds,
-            id,
-         ]
+         let parentItem = state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id || 'root')!
+
+         if (!parentItem?.isFolder && parentItem?.parentId) {
+            parentItem = state.Files.get(parentItem?.parentId)!
+         }
+         state.Files.set(id, { ...folder, id, parentId: parentItem.id } as Folder)
+            ;(state.Files.get(parentItem.id) as Folder).childrenIds = [...(parentItem as Folder).childrenIds, id]
          // const p = new Map(state.Files)
          // console.log(p)
          // state.Files = Map(state.Files)
          return state
       })
+      return id
    }
    // add-item api ------------------------------------------
 
@@ -130,10 +192,10 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
 
       state.set((state) => {
          const parent = state.Files.get(item.parentId) as Folder
-         ;(state.Files.get(item.parentId) as Folder).childrenIds.splice(parent.childrenIds.indexOf(id), 1)
-         ;(state.Files.get(item.parentId) as Folder).childrenIds = [
-            ...(state.Files.get(item.parentId) as Folder).childrenIds,
-         ]
+            ;(state.Files.get(item.parentId) as Folder).childrenIds.splice(parent.childrenIds.indexOf(id), 1)
+            ;(state.Files.get(item.parentId) as Folder).childrenIds = [
+               ...(state.Files.get(item.parentId) as Folder).childrenIds,
+            ]
 
          return state
       })
@@ -147,12 +209,33 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
 
       state.set((state) => {
          const parent = state.Files.get(parentId) as Folder
-         ;(state.Files.get(parentId) as Folder).childrenIds.splice(parent.childrenIds.indexOf(id), 1)
-         ;(state.Files.get(parentId) as Folder).childrenIds = [...(state.Files.get(parentId) as Folder).childrenIds]
+            ;(state.Files.get(parentId) as Folder).childrenIds.splice(parent.childrenIds.indexOf(id), 1)
+            ;(state.Files.get(parentId) as Folder).childrenIds = [...(state.Files.get(parentId) as Folder).childrenIds]
          return state
       })
    }
    // delete api -------------------------------------------
+
+   // hightlight file/folder api -----------------------------------
+
+   const highlightFileOrFolder = (id: string) => {
+      const target = document.querySelector(`button[data-id='${id}']`)
+      if (!id || !target) return
+
+      target.classList.add('bg-black')
+      // @ts-ignore
+
+      state.set((state) => {
+         // @ts-ignore
+         state.FocusedTreeItem?.target?.classList.remove('bg-black')
+         state.FocusedTreeItem = {
+            item: state.Files.get(id) || null,
+            target,
+         }
+         return state
+      })
+   }
+   // hightlight file/folder api -----------------------------------
 
    // initial data insertion
    useInsertionEffect(() => {
@@ -163,14 +246,18 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
             isFolder: true,
             name: 'root',
             parentId: 'root',
+            newName: "root",
+            isRenaming: false
          })
-         state.Files.set('0', { id: '0', childrenIds: ['5'], isFolder: true, name: 'Javascript', parentId: 'root' })
-         state.Files.set('1', { id: '1', childrenIds: [], isFolder: true, name: 'Rust', parentId: 'root' })
-         state.Files.set('2', { id: '2', childrenIds: [], isFolder: true, name: 'Python', parentId: 'root' })
-         state.Files.set('3', { id: '3', childrenIds: [], isFolder: true, name: 'elixier', parentId: 'root' })
+         state.Files.set('0', { id: '0', childrenIds: ['5'], isFolder: true, name: 'Javascript', parentId: 'root', newName: "Javascript", isRenaming: false })
+         state.Files.set('1', { id: '1', childrenIds: [], isFolder: true, name: 'Rust', parentId: 'root', newName: "Rust", isRenaming: false })
+         state.Files.set('2', { id: '2', childrenIds: [], isFolder: true, name: 'Python', parentId: 'root', newName: "Python", isRenaming: false })
+         state.Files.set('3', { id: '3', childrenIds: [], isFolder: true, name: 'Elixier', parentId: 'root', newName: "Elixier", isRenaming: false })
 
-         state.Files.set('5', { id: '5', isFolder: true, name: 'ReactJS', parentId: '0', childrenIds: ['6'] })
-         state.Files.set('6', { id: '6', isFolder: false, name: 'nextjs', parentId: '5' })
+         state.Files.set('5', { id: '5', isFolder: true, name: 'ReactJS', parentId: '0', childrenIds: ['6'], newName: "ReactJS", isRenaming: false })
+         state.Files.set('6', { id: '6', isFolder: false, name: 'nextjs', parentId: '5', newName: "nextjs", isRenaming: false })
+
+         state.TreeExpandState.set('root', true)
 
          // setting
          state.FocusedTreeItem.item = state.Files.get('root') as Folder
@@ -191,6 +278,13 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
                deleteFile,
                createFile,
                createFolder,
+               showFileInput,
+               showFolderInput,
+               hideFileInput,
+               hideFolderInput,
+               highlightFileOrFolder,
+               collapseTree,
+               refreshTree
             },
          }}
       >
