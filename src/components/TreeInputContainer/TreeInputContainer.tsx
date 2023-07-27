@@ -105,7 +105,6 @@ export default function TreeInputContainer() {
    // we can also use TreeContainerRef.current instead of document
    useEventListener(document, 'keydown', (e) => {
       if (e.key != 'Escape') return
-      console.log("ssdfdsf")
       handleCreateSubmit()
    }, {}, shouldShowFileInput || shouldShowFolderInput)
 
