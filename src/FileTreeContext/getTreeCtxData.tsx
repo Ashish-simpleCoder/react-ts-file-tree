@@ -9,6 +9,7 @@ export type StoreCtxState = {
    shouldShowFolderInput: boolean
    shouldShowFileInput: boolean
    showTreeContextMenu: boolean
+   isRenamingItem: boolean
 }
 
 type StoreCtxData = {
@@ -29,6 +30,7 @@ export default function getTreeCtxData(): StoreCtxData {
       shouldShowFolderInput: false,
       shouldShowFileInput: false,
       showTreeContextMenu: false,
+      isRenamingItem: false
    })
 
    const observers = useRef(new Set<() => void>())

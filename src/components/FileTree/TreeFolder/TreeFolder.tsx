@@ -1,5 +1,5 @@
 import type { Folder } from '../../../FileTreeContext/Ctx.type'
-import { ChangeEvent, FormEvent, type MouseEvent, type SVGProps } from 'react'
+import { type MouseEvent, type SVGProps } from 'react'
 
 import {
    useContextActions,
@@ -15,7 +15,6 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
    const childrenIds = useTreeCtxStateSelector((state) => (state.Files.get(folder.id) as Folder).childrenIds)
    const Files = useTreeCtxStateSelector((state) => state.Files)
    const isRenaming = useTreeCtxStateSelector(state => state.Files.get(folder.id)?.isRenaming)
-   const newName = useTreeCtxStateSelector(state => state.Files.get(folder.id)?.newName)
 
    const handleFolderClick = (e: MouseEvent<HTMLElement>) => {
       treeDispatch((state) => {
@@ -41,69 +40,14 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
       }
    }
 
-   const handleRenameChange = (e: ChangeEvent<HTMLInputElement>) => {
-      treeDispatch(state => {
-         state.Files.get(folder.id)!.newName = e.target.value
-         return state
-      })
-   }
-
-   const updateName = (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
-      treeDispatch(state => {
-         const item = state.Files.get(folder.id)
-         if (!item) return state
-         item.name = newName ?? item.name
-         item.isRenaming = false
-         return state
-      })
-   }
-
-
-   if (!isRenaming) {
-      return (
-         <>
-            {folder.id != 'root' && (
-               <button
-                  onClick={handleFolderClick}
-                  data-id={folder.id}
-                  className='folder-folder w-full flex items-end p-1'
-                  tabIndex={-1}
-               >
-                  {childrenIds.length > 0 && (
-                     <RightAngledArrow
-                        rotate={isFolderExpanded ? '90deg' : '0deg'}
-                        height={'16px'}
-                        width={'16px'}
-                        className='pointer-events-none'
-                     />
-                  )}
-                  <FolderIcon height={'16px'} width={'16px'} className='mr-2 pointer-events-none' />
-                  <span className='leading-5 pointer-events-none'>{folder.name}</span>
-               </button>
-            )}
-            {isFolderExpanded && (
-               <ul>
-                  {childrenIds.map((child_id) => {
-                     const node = Files.get(child_id)
-                     if (node) {
-                        return <Tree key={child_id} item={node} />
-                     }
-                     return null
-                  })}
-               </ul>
-            )}
-         </>
-      )
-   }
-
 
    return (
       <>
          {folder.id != 'root' && (
             <button
+               onClick={handleFolderClick}
                data-id={folder.id}
-               className='folder-folder w-full flex items-end'
+               className={`folder-folder w-full flex items-end ${isRenaming ? "px-1" : "p-1"}`}
                tabIndex={-1}
             >
                {childrenIds.length > 0 && (
@@ -114,12 +58,8 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
                      className='pointer-events-none'
                   />
                )}
-               <div className="w-4 h-4 mr-2">
-                  <FolderIcon height={'16px'} width={'16px'} className='mr-2 pointer-events-none' />
-               </div>
-               <form onSubmit={updateName} className='w-auto'>
-                  <input value={newName} onChange={handleRenameChange} className='leading-5 p-1 w-full' autoFocus />
-               </form>
+               <FolderIcon height={'16px'} width={'16px'} className='shrink-0 mr-2 pointer-events-none' />
+               {!isRenaming && <span className='leading-5 pointer-events-none'>{folder.name}</span>}
             </button>
          )}
          {isFolderExpanded && (

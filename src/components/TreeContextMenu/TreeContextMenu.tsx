@@ -23,6 +23,8 @@ export default function TreeContextMenu() {
          if (item) {
             item.isRenaming = true
          }
+         state.shouldShowFileInput = true
+         state.isRenamingItem = true
          return state
       })
       closeContextMenu()

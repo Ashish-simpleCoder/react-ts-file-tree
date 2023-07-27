@@ -1,6 +1,6 @@
 import { createPortal, flushSync } from 'react-dom'
 import { ElementRef, SVGProps, useEffect, useRef, useState } from 'react'
-import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
+import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
 import { useEventListener } from '../../hooks/useEventListener'
@@ -17,12 +17,14 @@ export default function TreeInputContainer() {
       collapseTree,
       refreshTree
    } = useContextActions()
+   const TreeDispatch = useTreeStateDispatch()
 
    const shouldShowFolderInput = useTreeCtxStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useTreeCtxStateSelector((state) => state.shouldShowFileInput)
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
    const FocusedItemTarget = useTreeCtxStateSelector((state) => state.FocusedTreeItem.target)
    const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
+   const isRenamingItem = useTreeCtxStateSelector((state) => state.isRenamingItem)
 
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
@@ -53,9 +55,28 @@ export default function TreeInputContainer() {
       }
    }
 
+   const updateItemName = () => {
+      if (!FocusedItem) return
+      if (!fileInputRef.current?.value) {
+         // throw error
+         // show tooltip error
+         return
+      }
+      TreeDispatch(state => {
+         const item = state.Files.get(FocusedItem?.id ?? "")
+         if (!item) return state
+
+         item.name = fileInputRef.current!.value
+         item.isRenaming = false
+         return state
+      })
+      highlightFileOrFolder(FocusedItem.id)
+      hideFileInput()
+   }
+
    const InputPortal = () => {
-      const [portalContainer, setPortalContainer] = useState<HTMLElement | null | undefined>(null)
       const isExpanded = useTreeCtxStateSelector(state => state.TreeExpandState.get(FocusedItem?.id ?? ""))
+      const [portalContainer, setPortalContainer] = useState<HTMLElement | null | undefined>(null)
       const elementRef = useRef<ElementRef<"li">>(null)
 
       useEffect(() => {
@@ -97,7 +118,33 @@ export default function TreeInputContainer() {
                   <button className='invisible hidden'></button>
                </form>
             </li>
-      )}
+         )
+      }
+      return createPortal(<PortalElement />, portalContainer)
+   }
+
+   const UpdateNameInputPortal = () => {
+      const portalContainer = FocusedItemTarget
+      const elementRef = useRef<ElementRef<"form">>(null)
+
+
+      useEventListener(TreeContainerRef.current, "click", (e) => {
+         // @ts-ignore
+         if (elementRef.current?.contains(e.target)) return
+         updateItemName()
+      })
+
+      if (!portalContainer) return null
+
+      const PortalElement = () => {
+         const [newName, setName] = useState(FocusedItem?.name ?? "")
+         return (
+            <form onSubmit={(e) => { e.preventDefault(); updateItemName() }} className='w-auto' ref={elementRef}>
+               <span><input className='z-10 h-7 outline-none focus:border leading-5 w-full' placeholder='new file' value={newName} onChange={(e) => setName(e.target.value)} ref={fileInputRef} autoFocus /></span>
+            </form>
+         )
+      }
+      // @ts-ignore
       return createPortal(<PortalElement />, portalContainer)
    }
 
@@ -105,7 +152,10 @@ export default function TreeInputContainer() {
    // we can also use TreeContainerRef.current instead of document
    useEventListener(document, 'keydown', (e) => {
       if (e.key != 'Escape') return
-      handleCreateSubmit()
+      if (!isRenamingItem) {
+         return handleCreateSubmit()
+      }
+      updateItemName()
    }, {}, shouldShowFileInput || shouldShowFolderInput)
 
 
@@ -127,7 +177,9 @@ export default function TreeInputContainer() {
             </button>
          </div>
 
-         {(shouldShowFolderInput || shouldShowFileInput) && <InputPortal />}
+         {((shouldShowFolderInput || shouldShowFileInput) && !isRenamingItem) && <InputPortal />}
+         {(shouldShowFileInput && isRenamingItem) && <UpdateNameInputPortal />}
+
       </div>
    )
 }
