@@ -1,9 +1,8 @@
-import { SVGProps, useEffect, useRef } from 'react'
+import { flushSync } from 'react-dom'
+import { FormEvent, SVGProps, useEffect, useRef } from 'react'
 import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
 import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
-import { useEventListener } from '../../hooks/useEventListener'
-import { flushSync } from 'react-dom'
 
 export default function TreeInputContainer() {
    const {
@@ -23,28 +22,9 @@ export default function TreeInputContainer() {
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
 
-   useEffect(() => {
-      if (shouldShowFileInput) {
-         fileInputRef.current?.focus()
-      }
-      if (shouldShowFolderInput) {
-         folderInputRef.current?.focus()
-      }
 
-      return () => {
-         if (!shouldShowFileInput) {
-            fileInputRef.current!.value = ''
-         }
-         if (!shouldShowFolderInput) {
-            folderInputRef.current!.value = ''
-         }
-      }
-   }, [shouldShowFileInput, shouldShowFolderInput])
-
-   useEventListener(document, 'keyup', (e) => {
-      if (e.key != 'Enter') return
-      if (!shouldShowFileInput && !shouldShowFolderInput) return
-
+   const handleCreateSubmit = (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
       if (shouldShowFileInput) {
          const name = fileInputRef.current?.value
          if (!name) return
@@ -65,7 +45,26 @@ export default function TreeInputContainer() {
          highlightFileOrFolder(id)
          hideFolderInput()
       }
-   })
+   }
+
+   useEffect(() => {
+      if (shouldShowFileInput) {
+         fileInputRef.current?.focus()
+      }
+      if (shouldShowFolderInput) {
+         folderInputRef.current?.focus()
+      }
+
+      return () => {
+         if (!shouldShowFileInput) {
+            fileInputRef.current!.value = ''
+         }
+         if (!shouldShowFolderInput) {
+            folderInputRef.current!.value = ''
+         }
+      }
+   }, [shouldShowFileInput, shouldShowFolderInput])
+
 
    return (
       <div className='py-2'>
@@ -83,15 +82,17 @@ export default function TreeInputContainer() {
                <span><CarbonCollapseAll height="18px" width="18px" /></span>
             </button>
          </div>
-
-         <div className={`flex items-center ${shouldShowFileInput ? '' : 'hidden'}`}>
-            <FileIcon className='mr-2' />
-            <input className='z-10 p-1 h-7 outline-none focus:border' placeholder='new file' ref={fileInputRef} />
-         </div>
-         <div className={`flex items-center ${shouldShowFolderInput ? '' : 'hidden'}`}>
-            <FolderIcon className='mr-2' />
-            <input className='z-10 p-1 h-7 outline-none focus:border' placeholder='new folder' ref={folderInputRef} />
-         </div>
+         <form onSubmit={handleCreateSubmit}>
+            <div className={`flex items-center ${shouldShowFileInput ? '' : 'hidden'}`}>
+               <FileIcon className='mr-2' />
+               <input className='z-10 p-1 h-7 outline-none focus:border' placeholder='new file' ref={fileInputRef} />
+            </div>
+            <div className={`flex items-center ${shouldShowFolderInput ? '' : 'hidden'}`}>
+               <FolderIcon className='mr-2' />
+               <input className='z-10 p-1 h-7 outline-none focus:border' placeholder='new folder' ref={folderInputRef} />
+            </div>
+            <button className='invisible hidden'></button>
+         </form>
       </div>
    )
 }
