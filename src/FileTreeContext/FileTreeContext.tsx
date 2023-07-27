@@ -12,9 +12,9 @@ const TreeCtx = createContext<
          toggleFileInputVisibility: (e?: MouseEvent<HTMLButtonElement>) => void
          deleteFile: (id: string) => void
          deleteFolder: (id: string) => void
-         createFile: (file: PartialBy<File, 'isFolder' | 'id' | 'parentId'>) => string | undefined
+         createFile: (file: PartialBy<File, 'isFolder' | 'id' | 'parentId' | "isRenaming" | "newName">) => string | undefined
          createFolder: (
-            folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds'>
+            folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds' | "isRenaming" | "newName">
          ) => string | undefined
          showFileInput: () => void
          showFolderInput: () => void
@@ -113,9 +113,11 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
    // toggle-collapse api ------------------------------------------
 
    // add-item api ------------------------------------------
-   const createFile = (file: PartialBy<File, 'isFolder' | 'id' | 'parentId'>) => {
+   const createFile = (file: PartialBy<File, 'isFolder' | 'id' | 'parentId' | "isRenaming" | "newName">) => {
       if (!file.parentId && !state.get().FocusedTreeItem.item?.id) return
       file.isFolder = false
+      file.isRenaming = false
+      file.newName = file.name
 
       const id = file.id ?? Date.now().toString()
 
@@ -133,11 +135,13 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
       return id
    }
 
-   const createFolder = (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds'>) => {
+   const createFolder = (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds' | "isRenaming" | "newName">) => {
       if (!folder.parentId && !state.get().FocusedTreeItem.item?.id) return
 
       folder.isFolder = true
       folder.childrenIds = folder.childrenIds ?? []
+      folder.isRenaming = false
+      folder.newName = folder.name
 
       const id = folder.id ?? Date.now().toString()
 
@@ -240,16 +244,16 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
             isFolder: true,
             name: 'root',
             parentId: 'root',
-            newName:"root",
+            newName: "root",
             isRenaming: false
          })
-         state.Files.set('0', { id: '0', childrenIds: ['5'], isFolder: true, name: 'Javascript', parentId: 'root', newName:"Javascript", isRenaming: false })
-         state.Files.set('1', { id: '1', childrenIds: [], isFolder: true, name: 'Rust', parentId: 'root', newName:"Rust", isRenaming: false })
-         state.Files.set('2', { id: '2', childrenIds: [], isFolder: true, name: 'Python', parentId: 'root', newName:"Python", isRenaming: false })
-         state.Files.set('3', { id: '3', childrenIds: [], isFolder: true, name: 'Elixier', parentId: 'root', newName:"Elixier", isRenaming: false })
+         state.Files.set('0', { id: '0', childrenIds: ['5'], isFolder: true, name: 'Javascript', parentId: 'root', newName: "Javascript", isRenaming: false })
+         state.Files.set('1', { id: '1', childrenIds: [], isFolder: true, name: 'Rust', parentId: 'root', newName: "Rust", isRenaming: false })
+         state.Files.set('2', { id: '2', childrenIds: [], isFolder: true, name: 'Python', parentId: 'root', newName: "Python", isRenaming: false })
+         state.Files.set('3', { id: '3', childrenIds: [], isFolder: true, name: 'Elixier', parentId: 'root', newName: "Elixier", isRenaming: false })
 
-         state.Files.set('5', { id: '5', isFolder: true, name: 'ReactJS', parentId: '0', childrenIds: ['6'], newName:"ReactJS", isRenaming: false })
-         state.Files.set('6', { id: '6', isFolder: false, name: 'nextjs', parentId: '5', newName:"nextjs", isRenaming: false })
+         state.Files.set('5', { id: '5', isFolder: true, name: 'ReactJS', parentId: '0', childrenIds: ['6'], newName: "ReactJS", isRenaming: false })
+         state.Files.set('6', { id: '6', isFolder: false, name: 'nextjs', parentId: '5', newName: "nextjs", isRenaming: false })
 
          state.TreeExpandState.set('root', true)
 
