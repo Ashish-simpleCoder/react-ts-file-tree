@@ -13,8 +13,6 @@ export default function FileTree() {
    useEventListener(window, 'keydown', (e) => {
       if (e.key != 'Escape') return
       TreeActionDispatch((state) => {
-         state.shouldShowFileInput = false
-         state.shouldShowFolderInput = false
          state.showTreeContextMenu = false
          return state
       })

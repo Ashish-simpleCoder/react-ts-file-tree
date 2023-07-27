@@ -1,8 +1,9 @@
-import { flushSync } from 'react-dom'
-import { FormEvent, SVGProps, useEffect, useRef } from 'react'
+import { createPortal, flushSync } from 'react-dom'
+import { ElementRef, SVGProps, useEffect, useRef, useState } from 'react'
 import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
 import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
+import { useEventListener } from '../../hooks/useEventListener'
 
 export default function TreeInputContainer() {
    const {
@@ -16,54 +17,98 @@ export default function TreeInputContainer() {
       collapseTree,
       refreshTree
    } = useContextActions()
+
    const shouldShowFolderInput = useTreeCtxStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useTreeCtxStateSelector((state) => state.shouldShowFileInput)
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
+   const FocusedItemTarget = useTreeCtxStateSelector((state) => state.FocusedTreeItem.target)
+   const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
+
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
 
+   // const portalParentElement = FocusedItem?.isFolder ? (FocusedItemTarget as HTMLButtonElement)?.parentElement : (FocusedItemTarget as HTMLButtonElement)?.parentElement?.parentElement?.parentElement
+   const portalParentElement = (FocusedItemTarget as HTMLButtonElement)?.parentElement
 
-   const handleCreateSubmit = (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault()
+
+
+   const handleCreateSubmit = () => {
       if (shouldShowFileInput) {
-         const name = fileInputRef.current?.value
-         if (!name) return
+         const name = fileInputRef.current?.value ?? ""
          let id: string | undefined = ''
          flushSync(() => {
             id = createFile({ name })
          })
-         highlightFileOrFolder(id)
+         id && highlightFileOrFolder(id)
          hideFileInput()
       }
       if (shouldShowFolderInput) {
-         const name = folderInputRef.current?.value
-         if (!name) return
+         const name = folderInputRef.current?.value ?? ""
          let id: string | undefined = ''
          flushSync(() => {
             id = createFolder({ name })
          })
-         highlightFileOrFolder(id)
+         id && highlightFileOrFolder(id)
          hideFolderInput()
       }
    }
 
-   useEffect(() => {
-      if (shouldShowFileInput) {
-         fileInputRef.current?.focus()
-      }
-      if (shouldShowFolderInput) {
-         folderInputRef.current?.focus()
-      }
+   const InputPortal = () => {
+      const [portalContainer, setPortalContainer] = useState<HTMLElement | null | undefined>(null)
+      const isExpanded = useTreeCtxStateSelector(state => state.TreeExpandState.get(FocusedItem?.id ?? ""))
+      const elementRef = useRef<ElementRef<"li">>(null)
 
-      return () => {
-         if (!shouldShowFileInput) {
-            fileInputRef.current!.value = ''
+      useEffect(() => {
+         // checking item type is folder or not
+         if (FocusedItem?.isFolder && isExpanded && portalParentElement) {
+            setPortalContainer(portalParentElement.querySelector("ul"))
+            return
          }
-         if (!shouldShowFolderInput) {
-            folderInputRef.current!.value = ''
+         // item is not folder then get it's parent element
+         if (FocusedItem && !FocusedItem.isFolder) {
+            setPortalContainer(portalParentElement?.parentElement?.parentElement?.querySelector("ul"))
+         } else {
+            // if none, then set it to root container
+            setPortalContainer(TreeContainerRef.current)
          }
-      }
-   }, [shouldShowFileInput, shouldShowFolderInput])
+      }, [isExpanded])
+
+
+      useEventListener(TreeContainerRef.current, "click", (e) => {
+         // @ts-ignore
+         if (elementRef.current?.contains(e.target)) return
+         handleCreateSubmit()
+      })
+
+      if (!portalContainer) return null
+
+      const PortalElement = () => {
+         return (
+            <li className={`p-1 ${(FocusedItem?.id == "root" || !FocusedItem?.isFolder) ? "" : "pl-4"}`} ref={elementRef}>
+               <form onSubmit={(e) => { e.preventDefault(); handleCreateSubmit() }} className='w-auto'>
+                  <div className={`flex items-center ${shouldShowFileInput ? '' : 'hidden'}`}>
+                     <FileIcon className='mr-2' />
+                     <input className='z-10 p-1 h-7 outline-none focus:border leading-5 w-full' placeholder='new file' ref={fileInputRef} autoFocus />
+                  </div>
+                  <div className={`flex items-center ${shouldShowFolderInput ? '' : 'hidden'}`}>
+                     <FolderIcon className='mr-2' />
+                     <input className='z-10 p-1 h-7 outline-none focus:border leading-5 w-full' placeholder='new folder' ref={folderInputRef} autoFocus />
+                  </div>
+                  <button className='invisible hidden'></button>
+               </form>
+            </li>
+      )}
+      return createPortal(<PortalElement />, portalContainer)
+   }
+
+
+   // we can also use TreeContainerRef.current instead of document
+   useEventListener(document, 'keydown', (e) => {
+      if (e.key != 'Escape') return
+      console.log("ssdfdsf")
+      handleCreateSubmit()
+   }, {}, shouldShowFileInput || shouldShowFolderInput)
+
 
 
    return (
@@ -82,17 +127,8 @@ export default function TreeInputContainer() {
                <span><CarbonCollapseAll height="18px" width="18px" /></span>
             </button>
          </div>
-         <form onSubmit={handleCreateSubmit}>
-            <div className={`flex items-center ${shouldShowFileInput ? '' : 'hidden'}`}>
-               <FileIcon className='mr-2' />
-               <input className='z-10 p-1 h-7 outline-none focus:border' placeholder='new file' ref={fileInputRef} />
-            </div>
-            <div className={`flex items-center ${shouldShowFolderInput ? '' : 'hidden'}`}>
-               <FolderIcon className='mr-2' />
-               <input className='z-10 p-1 h-7 outline-none focus:border' placeholder='new folder' ref={folderInputRef} />
-            </div>
-            <button className='invisible hidden'></button>
-         </form>
+
+         {(shouldShowFolderInput || shouldShowFileInput) && <InputPortal />}
       </div>
    )
 }

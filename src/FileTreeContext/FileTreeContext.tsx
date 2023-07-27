@@ -114,6 +114,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
 
    // add-item api ------------------------------------------
    const createFile = (file: PartialBy<File, 'isFolder' | 'id' | 'parentId' | "isRenaming" | "newName">) => {
+      if (!file.name) return
       if (!file.parentId && !state.get().FocusedTreeItem.item?.id) return
       file.isFolder = false
       file.isRenaming = false
@@ -136,6 +137,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
    }
 
    const createFolder = (folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds' | "isRenaming" | "newName">) => {
+      if (!folder.name) return
       if (!folder.parentId && !state.get().FocusedTreeItem.item?.id) return
 
       folder.isFolder = true
