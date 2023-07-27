@@ -1,9 +1,11 @@
-import { MouseEvent, SVGProps } from 'react'
+import { ChangeEvent, FormEvent, MouseEvent, SVGProps } from 'react'
 import type { File } from '../../../FileTreeContext/Ctx.type'
-import { useTreeStateDispatch } from '../../../FileTreeContext/useTreeCtxState'
+import { useTreeCtxStateSelector, useTreeStateDispatch } from '../../../FileTreeContext/useTreeCtxState'
 
 export default function TreeFile({ file }: { file: File }) {
    const treeDispatch = useTreeStateDispatch()
+   const isRenaming = useTreeCtxStateSelector(state => state.Files.get(file.id)?.isRenaming)
+   const newName = useTreeCtxStateSelector(state => state.Files.get(file.id)?.newName)
 
    const handleFileClick = (e: MouseEvent<HTMLElement>) => {
       treeDispatch((state) => {
@@ -24,17 +26,54 @@ export default function TreeFile({ file }: { file: File }) {
       })
    }
 
+   const handleRenameChange = (e: ChangeEvent<HTMLInputElement>) => {
+      treeDispatch(state => {
+         state.Files.get(file.id)!.newName = e.target.value
+         return state
+      })
+   }
+
+   const updateName = (e: FormEvent<HTMLFormElement>) => {
+      e.preventDefault()
+      treeDispatch(state => {
+         const item = state.Files.get(file.id)
+         if (!item) return state
+         item.name = newName ?? item.name
+         item.isRenaming = false
+         return state
+      })
+   }
+
+   if (!isRenaming) {
+      return (
+         <>
+            <button
+               onClick={handleFileClick}
+               data-id={file.id}
+               className={'folder-folder w-full flex items-end p-1'}
+               tabIndex={-1}
+            >
+               <FileIcon height={'16px'} width={'16px'} className='mr-2 pointer-events-none' />
+               <span className='leading-5 pointer-events-none'>{file.name}</span>
+            </button>
+         </>
+      )
+   }
+
    return (
       <>
          <button
             onClick={handleFileClick}
             data-id={file.id}
-            className='folder-folder w-full flex items-end p-1'
+            className={'folder-folder w-full flex items-center'}
             tabIndex={-1}
          >
-            <FileIcon height={'16px'} width={'16px'} className='mr-2 pointer-events-none' />
-
-            <span className='leading-5 pointer-events-none'>{file.name}</span>
+            <div className="w-4 h-4 mr-2">
+               <FileIcon height={'16px'} width={'16px'} className='mr-2 pointer-events-none' />
+            </div>
+            <form onSubmit={updateName} className='w-auto'>
+               <input value={newName} onChange={handleRenameChange} className='leading-5 p-1 w-full' autoFocus />
+            </form>
          </button>
       </>
    )
