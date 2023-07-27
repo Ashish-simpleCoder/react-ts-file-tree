@@ -7,7 +7,7 @@ export default function TreeContextMenu() {
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
    const Files = useTreeCtxStateSelector((state) => state.Files, false)
    const showTreeContextMenu = useTreeCtxStateSelector((state) => state.showTreeContextMenu)
-   const { deleteFile, deleteFolder, expandFolder } = useContextActions()
+   const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } = useContextActions()
    const TreeActionDispatch = useTreeStateDispatch()
 
    const closeContextMenu = () => {
@@ -133,10 +133,10 @@ export default function TreeContextMenu() {
                   <ul>
                      {FocusedItem?.isFolder && (
                         <>
-                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'>
+                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700' onClick={() => {toggleFileInputVisibility();closeContextMenu()}}>
                               <span>New File</span>
                            </li>
-                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'>
+                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700' onClick={() => {toggleFolderInputVisibility();closeContextMenu()}}>
                               <span>New Folder</span>
                            </li>
                            <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between' onClick={handleRename}>
