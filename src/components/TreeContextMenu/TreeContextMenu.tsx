@@ -36,25 +36,15 @@ export default function TreeContextMenu() {
       TreeActionDispatch((state) => {
          const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)!
 
-         // when context is opened on File-Tree container not on files
          if (!item) {
-            // @ts-ignore
-            state.FocusedTreeItem.target?.classList.remove('bg-black')
+            state.HighlightedItem.id = "root"
             state.FocusedTreeItem = {
                item: state.Files.get('root')!,
                target: document.querySelector('button[data-id=root]'),
             }
             return state
          }
-         if (state.FocusedTreeItem.item?.id != item.id) {
-            // @ts-ignore
-            e.target.classList.add('bg-black')
-            // @ts-ignore
-            state.FocusedTreeItem.target?.classList.remove('bg-black')
-         } else {
-            // @ts-ignore
-            e.target.classList.add('bg-black')
-         }
+         state.HighlightedItem.id = item.id
          state.FocusedTreeItem.item = item
          state.FocusedTreeItem.target = e.target
          return state
@@ -133,10 +123,10 @@ export default function TreeContextMenu() {
                   <ul>
                      {FocusedItem?.isFolder && (
                         <>
-                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700' onClick={() => {toggleFileInputVisibility();closeContextMenu()}}>
+                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700' onClick={() => { toggleFileInputVisibility(); closeContextMenu() }}>
                               <span>New File</span>
                            </li>
-                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700' onClick={() => {toggleFolderInputVisibility();closeContextMenu()}}>
+                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700' onClick={() => { toggleFolderInputVisibility(); closeContextMenu() }}>
                               <span>New Folder</span>
                            </li>
                            <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between' onClick={handleRename}>

@@ -5,20 +5,12 @@ import { useTreeCtxStateSelector, useTreeStateDispatch } from '../../../FileTree
 export default function TreeFile({ file }: { file: File }) {
    const treeDispatch = useTreeStateDispatch()
    const isRenaming = useTreeCtxStateSelector(state => state.Files.get(file.id)?.isRenaming)
+   const isHighlighted = useTreeCtxStateSelector(state => state.HighlightedItem.id == file.id)
 
    const handleFileClick = (e: MouseEvent<HTMLElement>) => {
       treeDispatch((state) => {
          state.showTreeContextMenu = false
-         if (state.FocusedTreeItem.item?.id != file.id) {
-            // adding the high-light class to current focused item
-            e.currentTarget.classList.add('bg-black')
-            // removing the high-light class from old-focused item
-            // @ts-ignore
-            state.FocusedTreeItem.target?.classList.remove('bg-black')
-         } else {
-            // @ts-ignore
-            e.currentTarget.classList.add('bg-black')
-         }
+         state.HighlightedItem.id = file.id
          state.FocusedTreeItem.item = file
          state.FocusedTreeItem.target = e.currentTarget
          return state
@@ -31,7 +23,7 @@ export default function TreeFile({ file }: { file: File }) {
          <button
             onClick={handleFileClick}
             data-id={file.id}
-            className={`folder-folder w-full flex items-end ${isRenaming ? "px-1" : "p-1"}`}
+            className={`folder-folder w-full flex items-end ${isRenaming ? "px-1" : "p-1"} ${isHighlighted ? "bg-black" : ""}`}
             tabIndex={-1}
          >
             <FileIcon height={'16px'} width={'16px'} className='shrink-0 mr-2 pointer-events-none' />
