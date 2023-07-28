@@ -129,20 +129,25 @@ export default function TreeContextMenu() {
                            <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700' onClick={() => { toggleFolderInputVisibility(); closeContextMenu() }}>
                               <span>New Folder</span>
                            </li>
-                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between' onClick={handleRename}>
-                              <span>Rename</span>
-                              <span>F2</span>
-                           </li>
-                           <li
-                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
-                              onClick={() => {
-                                 deleteFolder(FocusedItem.id)
-                                 closeContextMenu()
-                              }}
-                           >
-                              <span>Delete</span>
-                              <span>del</span>
-                           </li>
+                           {
+                              FocusedItem.id != "root" && (
+                                 <>
+                                    <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between' onClick={handleRename}>
+                                       <span>Rename</span>
+                                       <span>F2</span>
+                                    </li>
+                                    <li
+                                       className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
+                                       onClick={() => {
+                                          deleteFolder(FocusedItem.id)
+                                          closeContextMenu()
+                                       }}
+                                    >
+                                       <span>Delete</span>
+                                       <span>del</span>
+                                    </li>
+                                 </>)
+                           }
                         </>
                      )}
                      {!FocusedItem?.isFolder && (
