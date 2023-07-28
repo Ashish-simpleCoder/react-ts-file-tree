@@ -222,12 +222,13 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
       const target = document.querySelector(`button[data-id='${id}']`)
       if (!id || !target) return
 
-      target.classList.add('bg-black')
+      // target.classList.add('bg-black')
       // @ts-ignore
 
       state.set((state) => {
          // @ts-ignore
-         state.FocusedTreeItem?.target?.classList.remove('bg-black')
+         // state.FocusedTreeItem?.target?.classList.remove('bg-black')
+         state.HighlightedItem.id = id
          state.FocusedTreeItem = {
             item: state.Files.get(id) || null,
             target,
