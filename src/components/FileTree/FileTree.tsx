@@ -1,5 +1,5 @@
 import type { Folder } from '../../FileTreeContext/Ctx.type'
-import { useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
+import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../../hooks/useEventListener'
 import TreeContextMenu from '../TreeContextMenu/TreeContextMenu'
 import TreeInputContainer from '../TreeInputContainer/TreeInputContainer'
@@ -9,6 +9,8 @@ export default function FileTree() {
    const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
    const RootNode = useTreeCtxStateSelector((state) => state.Files.get('root') as Folder)
    const TreeActionDispatch = useTreeStateDispatch()
+   const { collapseFolder, expandFolder } = useContextActions()
+
 
    useEventListener(window, 'keydown', (e) => {
       if (e.key != 'Escape') return
@@ -17,6 +19,39 @@ export default function FileTree() {
          return state
       })
    })
+
+   useEventListener(TreeContainerRef.current, 'click', (e) => {
+      if (!(e.target as HTMLElement).classList.contains("file-item") && !(e.target as HTMLElement).classList.contains("folder-item")) return
+
+      const itemId = (e.target as HTMLElement).getAttribute("data-id")
+      if (!itemId) return
+
+
+      TreeActionDispatch((state) => {
+         const item = state.Files.get(itemId)
+         if (!item) return state
+
+         if (item.isFolder) {
+            const isFolderExpanded = state.TreeExpandState.get(item.id)
+            if (isFolderExpanded) {
+               collapseFolder(item.id)
+            } else {
+               expandFolder(item.id)
+            }
+         }
+         if (!item.isFolder) {
+
+         }
+
+         state.showTreeContextMenu = false
+         state.HighlightedItem.id = item.id
+         state.FocusedTreeItem.item = item
+         state.FocusedTreeItem.target = e.target
+         return state
+      })
+
+   })
+
 
    // const Files = useTreeCtxStateSelector((state) => state.Files)
    // console.log({ Files })
