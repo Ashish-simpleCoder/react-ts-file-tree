@@ -1,29 +1,17 @@
-import { MouseEvent, SVGProps } from 'react'
+import { SVGProps } from 'react'
 import type { File } from '../../../FileTreeContext/Ctx.type'
-import { useTreeCtxStateSelector, useTreeStateDispatch } from '../../../FileTreeContext/useTreeCtxState'
+import { useTreeCtxStateSelector } from '../../../FileTreeContext/useTreeCtxState'
 
 export default function TreeFile({ file }: { file: File }) {
-   const treeDispatch = useTreeStateDispatch()
    const isRenaming = useTreeCtxStateSelector(state => state.Files.get(file.id)?.isRenaming)
    const isHighlighted = useTreeCtxStateSelector(state => state.HighlightedItem.id == file.id)
-
-   const handleFileClick = (e: MouseEvent<HTMLElement>) => {
-      treeDispatch((state) => {
-         state.showTreeContextMenu = false
-         state.HighlightedItem.id = file.id
-         state.FocusedTreeItem.item = file
-         state.FocusedTreeItem.target = e.currentTarget
-         return state
-      })
-   }
 
 
    return (
       <>
          <button
-            onClick={handleFileClick}
             data-id={file.id}
-            className={`folder-folder w-full flex items-end ${isRenaming ? "px-1" : "p-1"} ${isHighlighted ? "bg-black" : ""}`}
+            className={`file-item w-full flex items-end ${isRenaming ? "px-1" : "p-1"} ${isHighlighted ? "bg-black" : ""}`}
             tabIndex={-1}
          >
             <FileIcon height={'16px'} width={'16px'} className='shrink-0 mr-2 pointer-events-none' />
