@@ -3,19 +3,20 @@ import type { File } from '../../../FileTreeContext/Ctx.type'
 import { useTreeCtxStateSelector } from '../../../FileTreeContext/useTreeCtxState'
 
 export default function TreeFile({ file }: { file: File }) {
-   const isRenaming = useTreeCtxStateSelector(state => state.Files.get(file.id)?.isRenaming)
-   const isHighlighted = useTreeCtxStateSelector(state => state.HighlightedItem.id == file.id)
-
+   const isRenaming = useTreeCtxStateSelector((state) => state.Files.get(file.id)?.isRenaming)
+   const isHighlighted = useTreeCtxStateSelector((state) => state.HighlightedItem.id == file.id)
 
    return (
       <>
          <button
             data-id={file.id}
-            className={`file-item w-full flex items-end ${isRenaming ? "px-1" : "p-1"} ${isHighlighted ? "bg-black" : ""}`}
+            className={`file-item w-full flex items-end ${isRenaming ? 'px-1' : 'p-1'} ${
+               isHighlighted ? 'bg-black' : ''
+            }`}
             tabIndex={-1}
          >
             <FileIcon height={'16px'} width={'16px'} className='shrink-0 mr-2 pointer-events-none' />
-            {!isRenaming && <span className='leading-5 pointer-events-none'>{file.name}</span>}
+            {!isRenaming && <span className='leading-5 pointer-events-none whitespace-nowrap'>{file.name}</span>}
          </button>
       </>
    )

@@ -1,25 +1,24 @@
 import type { Folder } from '../../../FileTreeContext/Ctx.type'
 import { type SVGProps } from 'react'
 
-import {
-   useTreeCtxStateSelector
-} from '../../../FileTreeContext/useTreeCtxState'
+import { useTreeCtxStateSelector } from '../../../FileTreeContext/useTreeCtxState'
 import Tree from '../Tree'
 
 export default function TreeFolder({ folder }: { folder: Folder }) {
    const isFolderExpanded = useTreeCtxStateSelector((state) => state.TreeExpandState.get(folder.id))
    const childrenIds = useTreeCtxStateSelector((state) => (state.Files.get(folder.id) as Folder).childrenIds)
    const Files = useTreeCtxStateSelector((state) => state.Files)
-   const isRenaming = useTreeCtxStateSelector(state => state.Files.get(folder.id)?.isRenaming)
-   const isHighlighted = useTreeCtxStateSelector(state => state.HighlightedItem.id == folder.id)
-   
+   const isRenaming = useTreeCtxStateSelector((state) => state.Files.get(folder.id)?.isRenaming)
+   const isHighlighted = useTreeCtxStateSelector((state) => state.HighlightedItem.id == folder.id)
 
    return (
       <>
          {folder.id != 'root' && (
             <button
                data-id={folder.id}
-               className={`folder-item w-full flex items-end ${isRenaming ? "px-1" : "p-1"} ${isHighlighted ? "bg-black" : ""}`}
+               className={`folder-item w-full flex items-end ${isRenaming ? 'px-1' : 'p-1'} ${
+                  isHighlighted ? 'bg-black' : ''
+               }`}
                tabIndex={-1}
             >
                {childrenIds.length > 0 && (
@@ -27,11 +26,11 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
                      rotate={isFolderExpanded ? '90deg' : '0deg'}
                      height={'16px'}
                      width={'16px'}
-                     className='pointer-events-none'
+                     className='pointer-events-none shrink-0'
                   />
                )}
                <FolderIcon height={'16px'} width={'16px'} className='shrink-0 mr-2 pointer-events-none' />
-               {!isRenaming && <span className='leading-5 pointer-events-none'>{folder.name}</span>}
+               {!isRenaming && <span className='leading-5 pointer-events-none whitespace-nowrap'>{folder.name}</span>}
             </button>
          )}
          {isFolderExpanded && (

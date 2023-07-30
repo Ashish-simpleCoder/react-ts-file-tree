@@ -1,6 +1,7 @@
 import type { Folder } from '../../FileTreeContext/Ctx.type'
 import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../../hooks/useEventListener'
+import { getKeyState } from '../../utils/getKeyState'
 import TreeContextMenu from '../TreeContextMenu/TreeContextMenu'
 import TreeInputContainer from '../TreeInputContainer/TreeInputContainer'
 import TreeFolder from './TreeFolder/TreeFolder'
@@ -8,9 +9,9 @@ import TreeFolder from './TreeFolder/TreeFolder'
 export default function FileTree() {
    const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
    const RootNode = useTreeCtxStateSelector((state) => state.Files.get('root') as Folder)
+   const state = useTreeCtxStateSelector((state) => state)
    const TreeActionDispatch = useTreeStateDispatch()
    const { collapseFolder, expandFolder } = useContextActions()
-
 
    useEventListener(window, 'keydown', (e) => {
       if (e.key != 'Escape') return
@@ -21,11 +22,16 @@ export default function FileTree() {
    })
 
    useEventListener(TreeContainerRef.current, 'click', (e) => {
-      if (!(e.target as HTMLElement).classList.contains("file-item") && !(e.target as HTMLElement).classList.contains("folder-item")) return
+      const shouldShowFileInputState = getKeyState(state, (state) => state.shouldShowFileInput)
+      if (shouldShowFileInputState) return
+      if (
+         !(e.target as HTMLElement).classList.contains('file-item') &&
+         !(e.target as HTMLElement).classList.contains('folder-item')
+      )
+         return
 
-      const itemId = (e.target as HTMLElement).getAttribute("data-id")
+      const itemId = (e.target as HTMLElement).getAttribute('data-id')
       if (!itemId) return
-
 
       TreeActionDispatch((state) => {
          const item = state.Files.get(itemId)
@@ -36,11 +42,10 @@ export default function FileTree() {
             if (isFolderExpanded) {
                collapseFolder(item.id)
             } else {
-               expandFolder(item.id)
+               ;(item as Folder).childrenIds.length > 0 && expandFolder(item.id)
             }
          }
          if (!item.isFolder) {
-
          }
 
          state.showTreeContextMenu = false
@@ -49,17 +54,12 @@ export default function FileTree() {
          state.FocusedTreeItem.target = e.target
          return state
       })
-
    })
 
-
-   // const Files = useTreeCtxStateSelector((state) => state.Files)
-   // console.log({ Files })
-
    return (
-      <section className='h-[100vh] w-64 border border-gray-700 bg-gray-900 p-'>
+      <section className='h-[100vh] w-64 border border-gray-700 bg-gray-900 fixed'>
          <TreeInputContainer />
-         <ul ref={TreeContainerRef} className='w-full'>
+         <ul ref={TreeContainerRef} className='w-full overflow-auto' style={{ height: 'calc(100vh - 36px)' }}>
             {/* {RootNode && <Tree item={RootNode} />} */}
             {RootNode && <TreeFolder folder={RootNode} />}
          </ul>
