@@ -16,7 +16,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
          {folder.id != 'root' && (
             <button
                data-id={folder.id}
-               className={`folder-item w-full flex items-end ${isRenaming ? 'px-1' : 'p-1'} ${
+               className={`folder-item w-full flex items-end p-1 ${
                   isHighlighted ? 'bg-black' : ''
                }`}
                tabIndex={-1}

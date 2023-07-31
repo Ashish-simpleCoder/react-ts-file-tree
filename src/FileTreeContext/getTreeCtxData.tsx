@@ -13,7 +13,7 @@ export type StoreCtxState = {
    HighlightedItem: { id: string | null }
 }
 
-type StoreCtxData = {
+export type StoreCtxData = {
    get: () => StoreCtxState
    set: (value: StoreCtxState | ((state: StoreCtxState) => StoreCtxState), notify?: boolean) => void
    observe: (cb: () => void) => () => void
