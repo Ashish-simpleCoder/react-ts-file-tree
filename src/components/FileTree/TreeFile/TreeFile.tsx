@@ -10,7 +10,7 @@ export default function TreeFile({ file }: { file: File }) {
       <>
          <button
             data-id={file.id}
-            className={`file-item w-full flex items-end ${isRenaming ? 'px-1' : 'p-1'} ${
+            className={`file-item w-full flex items-end p-1 ${
                isHighlighted ? 'bg-black' : ''
             }`}
             tabIndex={-1}

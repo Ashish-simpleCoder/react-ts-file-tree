@@ -38,12 +38,12 @@ export default function UpdateItemNameInput__Portal({
                e.preventDefault()
                updateItemName()
             }}
-            className='w-auto'
+            className='w-auto h-5'
             ref={elementRef}
          >
             <span>
                <input
-                  className='z-10 h-7 outline-none focus:border leading-5 w-full'
+                  className='z-10 h-5 outline-none focus:border leading-5 w-full'
                   placeholder='new file'
                   value={newName}
                   onChange={(e) => setName(e.target.value)}

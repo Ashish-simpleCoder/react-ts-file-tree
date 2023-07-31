@@ -63,7 +63,7 @@ export default function NewItemInput__Portal({
                <div className={`flex items-center ${shouldShowFileInput ? '' : 'hidden'}`}>
                   <FileIcon className='mr-2 shrink-0' />
                   <input
-                     className='z-10 p-1 h-7 outline-none focus:border leading-5 w-full'
+                     className='z-10 p-1 h-5 outline-none focus:border leading-5 w-full'
                      placeholder='new file'
                      ref={fileInputRef}
                      autoFocus
@@ -72,7 +72,7 @@ export default function NewItemInput__Portal({
                <div className={`flex items-center ${shouldShowFolderInput ? '' : 'hidden'}`}>
                   <FolderIcon className='mr-2 shrink-0' />
                   <input
-                     className='z-10 p-1 h-7 outline-none focus:border leading-5 w-full'
+                     className='z-10 p-1 h-5 outline-none focus:border leading-5 w-full'
                      placeholder='new folder'
                      ref={folderInputRef}
                      autoFocus
