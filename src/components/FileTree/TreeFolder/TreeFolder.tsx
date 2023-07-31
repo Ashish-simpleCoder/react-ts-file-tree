@@ -33,7 +33,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
                {!isRenaming && <span className='leading-5 pointer-events-none whitespace-nowrap'>{folder.name}</span>}
             </button>
          )}
-         {isFolderExpanded && (
+         {isFolderExpanded && childrenIds.length > 0 && (
             <ul>
                {childrenIds.map((child_id) => {
                   const node = Files.get(child_id)
