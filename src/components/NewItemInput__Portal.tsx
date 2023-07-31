@@ -47,6 +47,10 @@ export default function NewItemInput__Portal({
       if (elementRef.current?.contains(e.target)) return
       handleCreateSubmit()
    })
+   // save on contexmenu
+   useEventListener(TreeContainerRef.current, 'contextmenu', () => {
+      handleCreateSubmit()
+   })
 
    if (!portalContainer) return null
 

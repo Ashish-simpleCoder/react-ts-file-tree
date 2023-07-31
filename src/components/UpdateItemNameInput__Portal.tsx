@@ -26,6 +26,10 @@ export default function UpdateItemNameInput__Portal({
       // disabling this code due forgot why I added it
       // if ((e.target as HTMLElement).nodeName == 'BUTTON') return
    })
+   // save on contexmenu
+   useEventListener(TreeContainerRef.current, 'contextmenu', () => {
+      updateItemName()
+   })
 
    if (!portalContainer) return null
 
