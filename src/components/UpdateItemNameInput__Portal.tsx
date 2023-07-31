@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 
 export default function UpdateItemNameInput__Portal({
    fileInputRef,
-   updateItemName
+   updateItemName,
 }: {
    fileInputRef: RefObject<HTMLInputElement>
    updateItemName: () => void
@@ -16,20 +16,15 @@ export default function UpdateItemNameInput__Portal({
 
    const portalContainer = FocusedItemTarget
    const elementRef = useRef<ElementRef<'form'>>(null)
-   const valueRef = useRef<{ key: string }>()
 
    useEventListener(TreeContainerRef.current, 'click', (e) => {
-      // @ts-ignore
-      if (elementRef.current?.contains(e.target)) return
-      if ((e.target as HTMLElement).nodeName == 'BUTTON') return
+      if (elementRef.current?.contains(e.target as Node)) return
+      // if space key pressed and inputElement is focused then don't trigger save event
+      if (document.activeElement == fileInputRef.current) return
       updateItemName()
-   })
-   useEventListener(TreeContainerRef.current, 'keydown', (e) => {
-      // detecting if pressed key is space to prevent form submittion
-      if (e.key == ' ') {
-         // @ts-ignore
-         valueRef.current.key = e.key
-      }
+
+      // disabling this code due forgot why I added it
+      // if ((e.target as HTMLElement).nodeName == 'BUTTON') return
    })
 
    if (!portalContainer) return null
@@ -41,7 +36,6 @@ export default function UpdateItemNameInput__Portal({
          <form
             onSubmit={(e) => {
                e.preventDefault()
-               if (valueRef.current?.key == ' ') return
                updateItemName()
             }}
             className='w-auto'
