@@ -1,6 +1,6 @@
 import { flushSync } from 'react-dom'
 import { SVGProps, useRef } from 'react'
-import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
+import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../../hooks/useEventListener'
 import NewItemInput__Portal from '../NewItemInput__Portal'
 import UpdateItemNameInput__Portal from '../UpdateItemNameInput__Portal'
@@ -17,7 +17,6 @@ export default function TreeInputContainer() {
       collapseTree,
       refreshTree,
    } = useContextActions()
-   const TreeDispatch = useTreeStateDispatch()
 
    const shouldShowFolderInput = useTreeCtxStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useTreeCtxStateSelector((state) => state.shouldShowFileInput)
@@ -48,26 +47,6 @@ export default function TreeInputContainer() {
       }
    }
 
-   const updateItemName = () => {
-      if (!FocusedItem) return
-      if (!fileInputRef.current?.value) {
-         // throw error
-         // show tooltip error
-         return
-      }
-      TreeDispatch((state) => {
-         const item = state.Files.get(FocusedItem?.id ?? '')
-         if (!item) return state
-
-         item.name = fileInputRef.current!.value
-         item.isRenaming = false
-         state.isRenamingItem = false
-         return state
-      })
-      highlightFileOrFolder(FocusedItem.id)
-      hideFileInput()
-   }
-
    // we can also use TreeContainerRef.current instead of document
    useEventListener(
       document,
@@ -77,7 +56,6 @@ export default function TreeInputContainer() {
          if (!isRenamingItem) {
             return handleCreateSubmit()
          }
-         updateItemName()
       },
       {},
       shouldShowFileInput || shouldShowFolderInput
@@ -107,9 +85,7 @@ export default function TreeInputContainer() {
                handleCreateSubmit={handleCreateSubmit}
             />
          )}
-         {shouldShowFileInput && isRenamingItem && (
-            <UpdateItemNameInput__Portal fileInputRef={fileInputRef} updateItemName={updateItemName} />
-         )}
+         {shouldShowFileInput && isRenamingItem && <UpdateItemNameInput__Portal fileInputRef={fileInputRef} />}
       </div>
    )
 }
