@@ -1,7 +1,5 @@
-import { flushSync } from 'react-dom'
 import { SVGProps, useRef } from 'react'
 import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
-import { useEventListener } from '../../hooks/useEventListener'
 import NewItemInput__Portal from '../NewItemInput__Portal'
 import UpdateItemNameInput__Portal from '../UpdateItemNameInput__Portal'
 
@@ -9,11 +7,6 @@ export default function TreeInputContainer() {
    const {
       toggleFolderInputVisibility,
       toggleFileInputVisibility,
-      createFile,
-      createFolder,
-      hideFileInput,
-      hideFolderInput,
-      highlightFileOrFolder,
       collapseTree,
       refreshTree,
    } = useContextActions()
@@ -26,40 +19,6 @@ export default function TreeInputContainer() {
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
 
-   const handleCreateSubmit = () => {
-      if (shouldShowFileInput) {
-         const name = fileInputRef.current?.value ?? ''
-         let id: string | undefined = ''
-         flushSync(() => {
-            id = createFile({ name })
-         })
-         id && highlightFileOrFolder(id)
-         hideFileInput()
-      }
-      if (shouldShowFolderInput) {
-         const name = folderInputRef.current?.value ?? ''
-         let id: string | undefined = ''
-         flushSync(() => {
-            id = createFolder({ name })
-         })
-         id && highlightFileOrFolder(id)
-         hideFolderInput()
-      }
-   }
-
-   // we can also use TreeContainerRef.current instead of document
-   useEventListener(
-      document,
-      'keydown',
-      (e) => {
-         if (e.key != 'Escape') return
-         if (!isRenamingItem) {
-            return handleCreateSubmit()
-         }
-      },
-      {},
-      shouldShowFileInput || shouldShowFolderInput
-   )
 
    return (
       <div className='py-2 h-9'>
@@ -82,7 +41,6 @@ export default function TreeInputContainer() {
             <NewItemInput__Portal
                fileInputRef={fileInputRef}
                folderInputRef={folderInputRef}
-               handleCreateSubmit={handleCreateSubmit}
             />
          )}
          {shouldShowFileInput && isRenamingItem && <UpdateItemNameInput__Portal fileInputRef={fileInputRef} />}
