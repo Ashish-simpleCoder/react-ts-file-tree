@@ -2,7 +2,7 @@
 File tree built in React-Typescript
 
 ## Description
-- File-Explorer Built in React. 
+- File-Tree Built in React. 
 
 ## Getting Started
 
