@@ -1,4 +1,4 @@
-import { SVGProps, useRef } from 'react'
+import { SVGProps } from 'react'
 import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
 import NewItemInput__Portal from '../NewItemInput__Portal'
 import UpdateItemNameInput__Portal from '../UpdateItemNameInput__Portal'
@@ -15,9 +15,6 @@ export default function TreeInputContainer() {
    const shouldShowFileInput = useTreeCtxStateSelector((state) => state.shouldShowFileInput)
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
    const isRenamingItem = useTreeCtxStateSelector((state) => state.isRenamingItem)
-
-   const fileInputRef = useRef<HTMLInputElement>(null)
-   const folderInputRef = useRef<HTMLInputElement>(null)
 
 
    return (
@@ -38,12 +35,9 @@ export default function TreeInputContainer() {
          </div>
 
          {(shouldShowFolderInput || shouldShowFileInput) && !isRenamingItem && (
-            <NewItemInput__Portal
-               fileInputRef={fileInputRef}
-               folderInputRef={folderInputRef}
-            />
+            <NewItemInput__Portal />
          )}
-         {shouldShowFileInput && isRenamingItem && <UpdateItemNameInput__Portal fileInputRef={fileInputRef} />}
+         {shouldShowFileInput && isRenamingItem && <UpdateItemNameInput__Portal/>}
       </div>
    )
 }

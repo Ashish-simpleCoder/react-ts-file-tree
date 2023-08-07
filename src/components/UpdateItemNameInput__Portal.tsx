@@ -1,13 +1,15 @@
-import { ElementRef, RefObject, useRef, useState } from 'react'
+import type { Folder } from '../FileTreeContext/Ctx.type'
+import { ElementRef, useRef, useState } from 'react'
 import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../hooks/useEventListener'
 import { createPortal } from 'react-dom'
-import { Folder } from '../FileTreeContext/Ctx.type'
 
-export default function UpdateItemNameInput__Portal({ fileInputRef }: { fileInputRef: RefObject<HTMLInputElement> }) {
+export default function UpdateItemNameInput__Portal() {
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
    const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
    const FocusedItemTarget = useTreeCtxStateSelector((state) => state.FocusedTreeItem.target)
+   const fileInputRef = useRef<HTMLInputElement>(null)
+
 
    const portalContainer = FocusedItemTarget
    const elementRef = useRef<ElementRef<'form'>>(null)

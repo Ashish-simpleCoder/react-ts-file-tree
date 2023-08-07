@@ -1,5 +1,5 @@
 import type { Folder } from '../FileTreeContext/Ctx.type'
-import type { ElementRef, RefObject } from 'react'
+import type { ElementRef } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal, flushSync } from 'react-dom'
 import { useContextActions, useTreeCtxStateSelector } from '../FileTreeContext/useTreeCtxState'
@@ -7,13 +7,7 @@ import { useEventListener } from '../hooks/useEventListener'
 import { FileIcon } from './FileTree/TreeFile/TreeFile'
 import { FolderIcon } from './FileTree/TreeFolder/TreeFolder'
 
-export default function NewItemInput__Portal({
-   fileInputRef,
-   folderInputRef,
-}: {
-   fileInputRef: RefObject<HTMLInputElement>
-   folderInputRef: RefObject<HTMLInputElement>
-}) {
+export default function NewItemInput__Portal() {
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
    const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
    const FocusedItemTarget = useTreeCtxStateSelector((state) => state.FocusedTreeItem.target)
@@ -24,6 +18,8 @@ export default function NewItemInput__Portal({
    const [portalContainer, setPortalContainer] = useState<HTMLElement | null | undefined>(null)
    const elementRef = useRef<ElementRef<'li'>>(null)
    const portalParentElement = (FocusedItemTarget as HTMLButtonElement)?.parentElement
+   const fileInputRef = useRef<HTMLInputElement>(null)
+   const folderInputRef = useRef<HTMLInputElement>(null)
 
    const { createFile, createFolder, hideFileInput, hideFolderInput, highlightFileOrFolder } = useContextActions()
 
