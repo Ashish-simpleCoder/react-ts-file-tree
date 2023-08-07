@@ -1,5 +1,4 @@
 # react-ts-file-tree
-File tree built in React-Typescript
 
 ## Description
 - File-Tree Built in React. 
