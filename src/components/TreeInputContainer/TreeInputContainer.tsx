@@ -1,6 +1,7 @@
-import { SVGProps } from 'react'
+import type { SVGProps } from 'react'
+
 import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
-import NewItemInput__Portal from '../NewItemInput__Portal'
+import AddNewItem__Portal from '../AddNewItemInput__Portal'
 import UpdateItemNameInput__Portal from '../UpdateItemNameInput__Portal'
 
 export default function TreeInputContainer() {
@@ -34,8 +35,9 @@ export default function TreeInputContainer() {
             </button>
          </div>
 
+         {/* portals for creating and updating files */}
          {(shouldShowFolderInput || shouldShowFileInput) && !isRenamingItem && (
-            <NewItemInput__Portal />
+            <AddNewItem__Portal />
          )}
          {shouldShowFileInput && isRenamingItem && <UpdateItemNameInput__Portal/>}
       </div>

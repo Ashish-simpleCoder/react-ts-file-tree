@@ -68,20 +68,9 @@ export default function TreeContextMenu() {
       'click',
       (e) => {
          const contextMenu = document.querySelector('#tree-context-menu')
-
-         // @ts-ignore
-         if (contextMenu?.contains(e.target)) return
-         TreeActionDispatch((state) => {
-            state.showTreeContextMenu = false
-            return state
-         })
-
-         // @ts-ignore
-         // if (!e.target.classList.contains('tree-context-menu-overlay')) return
-         // TreeActionDispatch((state) => {
-         //    state.showTreeContextMenu = false
-         //    return state
-         // })
+         if (contextMenu?.contains(e.target as Node)) return
+         
+         closeContextMenu()
       },
       {},
       showTreeContextMenu
@@ -111,6 +100,9 @@ export default function TreeContextMenu() {
       },
       { shouldAddEvent: true, preventDefault: true }
    )
+
+   useKeyListener('keydown', ['Escape'] ,closeContextMenu,{shouldAddEvent: showTreeContextMenu})
+
 
    return (
       <>
