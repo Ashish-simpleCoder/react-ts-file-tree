@@ -1,5 +1,5 @@
 import type { Folder } from '../../../FileTreeContext/Ctx.type'
-import { type SVGProps } from 'react'
+import type { SVGProps } from 'react'
 
 import { useTreeCtxStateSelector } from '../../../FileTreeContext/useTreeCtxState'
 import Tree from '../Tree'

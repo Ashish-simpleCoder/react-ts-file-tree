@@ -2,12 +2,13 @@ import type { Folder } from '../FileTreeContext/Ctx.type'
 import type { ElementRef } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal, flushSync } from 'react-dom'
+
 import { useContextActions, useTreeCtxStateSelector } from '../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../hooks/useEventListener'
 import { FileIcon } from './FileTree/TreeFile/TreeFile'
 import { FolderIcon } from './FileTree/TreeFolder/TreeFolder'
 
-export default function NewItemInput__Portal() {
+export default function AddNewItem__Portal() {
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
    const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
    const FocusedItemTarget = useTreeCtxStateSelector((state) => state.FocusedTreeItem.target)
@@ -65,7 +66,7 @@ export default function NewItemInput__Portal() {
          })
       }
 
-      const handleCreateSubmit = () => {
+      const handleCreateItem = () => {
          if (error) {
             hideFileInput()
             hideFolderInput()
@@ -96,7 +97,7 @@ export default function NewItemInput__Portal() {
          if (shouldShowFileInput && document.activeElement == fileInputRef.current) return
          if (shouldShowFolderInput && document.activeElement == folderInputRef.current) return
 
-         handleCreateSubmit()
+         handleCreateItem()
 
          // disabling this code due forgot why I added it
          // if ((e.target as HTMLElement).nodeName == 'BUTTON') return
@@ -105,12 +106,12 @@ export default function NewItemInput__Portal() {
       // we can also use TreeContainerRef.current instead of document
       useEventListener(document, 'keydown', (e) => {
          if (e.key != 'Escape') return
-         handleCreateSubmit()
+         handleCreateItem()
       })
 
       // save on contexmenu
       useEventListener(TreeContainerRef.current, 'contextmenu', () => {
-         handleCreateSubmit()
+         handleCreateItem()
       })
 
       return (
@@ -119,7 +120,7 @@ export default function NewItemInput__Portal() {
                onSubmit={(e) => {
                   e.preventDefault()
                   if (error) return
-                  handleCreateSubmit()
+                  handleCreateItem()
                }}
                className='w-auto p-1 relative'
             >
@@ -150,5 +151,6 @@ export default function NewItemInput__Portal() {
          </li>
       )
    }
+
    return createPortal(<PortalElement />, portalContainer)
 }
