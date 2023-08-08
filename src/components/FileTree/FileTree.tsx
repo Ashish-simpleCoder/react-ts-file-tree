@@ -13,14 +13,9 @@ export default function FileTree() {
    const TreeActionDispatch = useTreeStateDispatch()
    const { collapseFolder, expandFolder } = useContextActions()
 
-   useEventListener(window, 'keydown', (e) => {
-      if (e.key != 'Escape') return
-      TreeActionDispatch((state) => {
-         state.showTreeContextMenu = false
-         return state
-      })
-   })
 
+   // highlight logic for file/folder
+   // collapse-expand logic
    useEventListener(TreeContainerRef.current, 'click', (e) => {
       const shouldShowFileInputState = getKeyState(state, (state) => state.shouldShowFileInput)
       if (shouldShowFileInputState) return
@@ -48,7 +43,6 @@ export default function FileTree() {
          if (!item.isFolder) {
          }
 
-         state.showTreeContextMenu = false
          state.HighlightedItem.id = item.id
          state.FocusedTreeItem.item = item
          state.FocusedTreeItem.target = e.target
