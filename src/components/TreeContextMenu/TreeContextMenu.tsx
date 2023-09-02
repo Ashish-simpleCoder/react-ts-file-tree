@@ -7,7 +7,9 @@ export default function TreeContextMenu() {
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
    const Files = useTreeCtxStateSelector((state) => state.Files, false)
    const showTreeContextMenu = useTreeCtxStateSelector((state) => state.showTreeContextMenu)
-   const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } = useContextActions()
+   const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
+   const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } =
+      useContextActions()
    const TreeActionDispatch = useTreeStateDispatch()
 
    const closeContextMenu = () => {
@@ -17,8 +19,8 @@ export default function TreeContextMenu() {
       })
    }
    const handleRename = () => {
-      TreeActionDispatch(state => {
-         const itemId = FocusedItem?.id ?? ""
+      TreeActionDispatch((state) => {
+         const itemId = FocusedItem?.id ?? ''
          const item = state.Files.get(itemId)
          if (item) {
             item.isRenaming = true
@@ -30,14 +32,14 @@ export default function TreeContextMenu() {
       closeContextMenu()
    }
 
-   useEventListener(window, 'contextmenu', (e) => {
+   useEventListener(TreeContainerRef.current, 'contextmenu', (e) => {
       e.preventDefault()
 
       TreeActionDispatch((state) => {
          const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)!
 
          if (!item) {
-            state.HighlightedItem.id = "root"
+            state.HighlightedItem.id = 'root'
             state.FocusedTreeItem = {
                item: state.Files.get('root')!,
                target: document.querySelector('button[data-id=root]'),
@@ -69,7 +71,7 @@ export default function TreeContextMenu() {
       (e) => {
          const contextMenu = document.querySelector('#tree-context-menu')
          if (contextMenu?.contains(e.target as Node)) return
-         
+
          closeContextMenu()
       },
       {},
@@ -101,8 +103,7 @@ export default function TreeContextMenu() {
       { shouldAddEvent: true, preventDefault: true }
    )
 
-   useKeyListener('keydown', ['Escape'] ,closeContextMenu,{shouldAddEvent: showTreeContextMenu})
-
+   useKeyListener('keydown', ['Escape'], closeContextMenu, { shouldAddEvent: showTreeContextMenu })
 
    return (
       <>
@@ -115,36 +116,53 @@ export default function TreeContextMenu() {
                   <ul>
                      {FocusedItem?.isFolder && (
                         <>
-                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700' onClick={() => { toggleFileInputVisibility(); closeContextMenu() }}>
+                           <li
+                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
+                              onClick={() => {
+                                 toggleFileInputVisibility()
+                                 closeContextMenu()
+                              }}
+                           >
                               <span>New File</span>
                            </li>
-                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700' onClick={() => { toggleFolderInputVisibility(); closeContextMenu() }}>
+                           <li
+                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
+                              onClick={() => {
+                                 toggleFolderInputVisibility()
+                                 closeContextMenu()
+                              }}
+                           >
                               <span>New Folder</span>
                            </li>
-                           {
-                              FocusedItem.id != "root" && (
-                                 <>
-                                    <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between' onClick={handleRename}>
-                                       <span>Rename</span>
-                                       <span>F2</span>
-                                    </li>
-                                    <li
-                                       className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
-                                       onClick={() => {
-                                          deleteFolder(FocusedItem.id)
-                                          closeContextMenu()
-                                       }}
-                                    >
-                                       <span>Delete</span>
-                                       <span>del</span>
-                                    </li>
-                                 </>)
-                           }
+                           {FocusedItem.id != 'root' && (
+                              <>
+                                 <li
+                                    className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
+                                    onClick={handleRename}
+                                 >
+                                    <span>Rename</span>
+                                    <span>F2</span>
+                                 </li>
+                                 <li
+                                    className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
+                                    onClick={() => {
+                                       deleteFolder(FocusedItem.id)
+                                       closeContextMenu()
+                                    }}
+                                 >
+                                    <span>Delete</span>
+                                    <span>del</span>
+                                 </li>
+                              </>
+                           )}
                         </>
                      )}
                      {!FocusedItem?.isFolder && (
                         <>
-                           <li className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between' onClick={handleRename}>
+                           <li
+                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
+                              onClick={handleRename}
+                           >
                               <span>Rename</span>
                               <span>F2</span>
                            </li>
