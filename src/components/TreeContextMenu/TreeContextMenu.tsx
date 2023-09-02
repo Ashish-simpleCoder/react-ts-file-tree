@@ -61,8 +61,22 @@ export default function TreeContextMenu() {
 
       // const rect = (FocusedItem as HTMLButtonElement).getBoundingClientRect()
       const menu = document.getElementById('tree-context-menu')
-      menu!.style.top = e.pageY + 'px'
-      menu!.style.left = e.pageX + 'px'
+      const menuHeight = menu?.clientHeight ?? 70
+      const extraHeight = 20
+      let left = e.clientX + 5
+      let top = e.clientY
+
+      // to prevent going outside of the tree-container
+      if (window.innerWidth - e.clientX < 100) {
+         left = window.innerWidth - 100
+      }
+      // to prevent going outside of the tree-container
+      if (window.innerHeight - e.clientY < menuHeight) {
+         top = window.innerHeight - menuHeight - extraHeight
+      }
+
+      menu!.style.left = left + 'px'
+      menu!.style.top = top + 'px'
    })
 
    useEventListener(
