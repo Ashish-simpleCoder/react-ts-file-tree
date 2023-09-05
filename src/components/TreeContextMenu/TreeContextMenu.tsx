@@ -1,9 +1,11 @@
+import { ElementRef, useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { useEventListener } from '../../hooks/useEventListener'
 import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import useKeyListener from '../../hooks/useKeyListener'
 
 export default function TreeContextMenu() {
+   const ctxMenuRef = useRef<ElementRef<'div'>>(null)
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
    const Files = useTreeCtxStateSelector((state) => state.Files, false)
    const showTreeContextMenu = useTreeCtxStateSelector((state) => state.showTreeContextMenu)
@@ -35,33 +37,29 @@ export default function TreeContextMenu() {
    useEventListener(TreeContainerRef.current, 'contextmenu', (e) => {
       e.preventDefault()
 
-      TreeActionDispatch((state) => {
-         const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)!
-
-         if (!item) {
-            state.HighlightedItem.id = 'root'
-            state.FocusedTreeItem = {
-               item: state.Files.get('root')!,
-               target: document.querySelector('button[data-id=root]'),
-            }
-            return state
-         }
-         state.HighlightedItem.id = item.id
-         state.FocusedTreeItem.item = item
-         state.FocusedTreeItem.target = e.target
-         return state
-      })
-
       flushSync(() => {
          TreeActionDispatch((state) => {
+            const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)!
+
+            if (!item) {
+               state.HighlightedItem.id = 'root'
+               state.FocusedTreeItem = {
+                  item: state.Files.get('root')!,
+                  target: document.querySelector('button[data-id=root]'),
+               }
+            } else {
+               state.HighlightedItem.id = item.id
+               state.FocusedTreeItem.item = item
+               state.FocusedTreeItem.target = e.target
+            }
             state.showTreeContextMenu = true
             return state
          })
       })
 
-      // const rect = (FocusedItem as HTMLButtonElement).getBoundingClientRect()
-      const menu = document.getElementById('tree-context-menu')
-      const menuHeight = menu?.clientHeight ?? 70
+      const menu = ctxMenuRef.current
+      if (!menu) return
+      const menuHeight = menu.clientHeight ?? 70
       const extraHeight = 20
       let left = e.clientX + 5
       let top = e.clientY
@@ -75,18 +73,18 @@ export default function TreeContextMenu() {
          top = window.innerHeight - menuHeight - extraHeight
       }
 
-      menu!.style.left = left + 'px'
-      menu!.style.top = top + 'px'
+      menu.style.left = left + 'px'
+      menu.style.top = top + 'px'
    })
 
    useEventListener(
       document,
       'click',
       (e) => {
-         const contextMenu = document.querySelector('#tree-context-menu')
-         if (contextMenu?.contains(e.target as Node)) return
-
-         closeContextMenu()
+         const contextMenu = ctxMenuRef.current
+         if (!contextMenu?.contains(e.target as Node)) {
+            closeContextMenu()
+         }
       },
       {},
       showTreeContextMenu
@@ -126,6 +124,7 @@ export default function TreeContextMenu() {
                <div
                   id='tree-context-menu'
                   className='w-64 rounded-sm border border-gray-700 fixed left-10 bg-slate-800 z-10'
+                  ref={ctxMenuRef}
                >
                   <ul>
                      {FocusedItem?.isFolder && (
