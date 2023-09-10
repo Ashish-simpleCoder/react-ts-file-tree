@@ -1,7 +1,7 @@
 import type { Folder } from '../FileTreeContext/Ctx.type'
 import type { ElementRef } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { createPortal, flushSync } from 'react-dom'
+import { createPortal } from 'react-dom'
 
 import { useContextActions, useTreeCtxStateSelector } from '../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../hooks/useEventListener'
@@ -22,7 +22,7 @@ export default function AddNewItem__Portal() {
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
 
-   const { createFile, createFolder, hideFileInput, hideFolderInput, highlightFileOrFolder } = useContextActions()
+   const { createFile, createFolder, hideAllInputs } = useContextActions()
 
    useEffect(() => {
       // checking item type is folder or not
@@ -68,26 +68,16 @@ export default function AddNewItem__Portal() {
 
       const handleSaveItem = () => {
          if (error) {
-            hideFileInput()
-            hideFolderInput()
+            hideAllInputs()
             return
          }
          if (shouldShowFileInput) {
-            let id: string | undefined = ''
-            flushSync(() => {
-               id = createFile({ name: newName })
-            })
-            id && highlightFileOrFolder(id)
-            hideFileInput()
+            createFile({ name: newName })
          }
          if (shouldShowFolderInput) {
-            let id: string | undefined = ''
-            flushSync(() => {
-               id = createFolder({ name: newName })
-            })
-            id && highlightFileOrFolder(id)
-            hideFolderInput()
+            createFolder({ name: newName })
          }
+         hideAllInputs()
       }
 
       useEventListener(treeContainerRef.current, 'click', (e) => {

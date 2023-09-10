@@ -2,6 +2,8 @@ import type { MouseEvent } from 'react'
 import type { PartialBy } from '../types/types'
 import type { File, Folder } from './Ctx.type'
 
+import { flushSync } from 'react-dom'
+
 import getTreeCtxData from './getTreeCtxData'
 
 export default function getContextActions(state: ReturnType<typeof getTreeCtxData>) {
@@ -92,17 +94,19 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
       file.newName = file.name
 
       const id = file.id ?? Date.now().toString()
+      flushSync(() => {
+         state.set((state) => {
+            let parentItem = state.Files.get(file.parentId || state.FocusedTreeItem.item!.id || 'root')!
 
-      state.set((state) => {
-         let parentItem = state.Files.get(file.parentId || state.FocusedTreeItem.item!.id || 'root')!
-
-         if (!parentItem?.isFolder && parentItem?.parentId) {
-            parentItem = state.Files.get(parentItem?.parentId)!
-         }
-         state.Files.set(id, { ...file, id, parentId: parentItem.id } as File)
-         ;(state.Files.get(parentItem.id) as Folder).childrenIds = [...(parentItem as Folder).childrenIds, id]
-         return state
+            if (!parentItem?.isFolder && parentItem?.parentId) {
+               parentItem = state.Files.get(parentItem?.parentId)!
+            }
+            state.Files.set(id, { ...file, id, parentId: parentItem.id } as File)
+            ;(state.Files.get(parentItem.id) as Folder).childrenIds = [...(parentItem as Folder).childrenIds, id]
+            return state
+         })
       })
+      highlightFileOrFolder(id)
       return id
    }
 
@@ -119,19 +123,20 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
 
       const id = folder.id ?? Date.now().toString()
 
-      state.set((state) => {
-         let parentItem = state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id || 'root')!
+      flushSync(() => {
+         state.set((state) => {
+            let parentItem = state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id || 'root')!
 
-         if (!parentItem?.isFolder && parentItem?.parentId) {
-            parentItem = state.Files.get(parentItem?.parentId)!
-         }
-         state.Files.set(id, { ...folder, id, parentId: parentItem.id } as Folder)
-         ;(state.Files.get(parentItem.id) as Folder).childrenIds = [...(parentItem as Folder).childrenIds, id]
-         // const p = new Map(state.Files)
-         // console.log(p)
-         // state.Files = Map(state.Files)
-         return state
+            if (!parentItem?.isFolder && parentItem?.parentId) {
+               parentItem = state.Files.get(parentItem?.parentId)!
+            }
+            state.Files.set(id, { ...folder, id, parentId: parentItem.id } as Folder)
+            ;(state.Files.get(parentItem.id) as Folder).childrenIds = [...(parentItem as Folder).childrenIds, id]
+            return state
+         })
       })
+      highlightFileOrFolder(id)
+
       return id
    }
    // add-item api ------------------------------------------
@@ -192,7 +197,7 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
 
    const highlightFileOrFolder = (id: string) => {
       const target = document.querySelector(`button[data-id='${id}']`)
-      if (!id || !target) return
+      if (!target) return
 
       // target.classList.add('bg-black')
       // @ts-ignore
@@ -209,6 +214,13 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
       })
    }
    // hightlight file/folder api -----------------------------------
+   const hideAllInputs = () => {
+      state.set((state) => {
+         state.shouldShowFileInput = false
+         state.shouldShowFolderInput = false
+         return state
+      })
+   }
 
    return {
       expandFolder,
@@ -226,5 +238,6 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
       highlightFileOrFolder,
       collapseTree,
       refreshTree,
+      hideAllInputs,
    }
 }
