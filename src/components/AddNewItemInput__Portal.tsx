@@ -10,7 +10,7 @@ import { FolderIcon } from './FileTree/TreeFolder/TreeFolder'
 
 export default function AddNewItem__Portal() {
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
-   const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
+   const treeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
    const FocusedItemTarget = useTreeCtxStateSelector((state) => state.FocusedTreeItem.target)
    const isExpanded = useTreeCtxStateSelector((state) => state.TreeExpandState.get(FocusedItem?.id ?? ''))
    const shouldShowFolderInput = useTreeCtxStateSelector((state) => state.shouldShowFolderInput)
@@ -35,7 +35,7 @@ export default function AddNewItem__Portal() {
          setPortalContainer(portalParentElement?.parentElement?.parentElement?.querySelector('ul'))
       } else {
          // if none, then set it to root container
-         setPortalContainer(TreeContainerRef.current)
+         setPortalContainer(treeContainerRef.current)
       }
    }, [isExpanded])
 
@@ -66,7 +66,7 @@ export default function AddNewItem__Portal() {
          })
       }
 
-      const handleCreateItem = () => {
+      const handleSaveItem = () => {
          if (error) {
             hideFileInput()
             hideFolderInput()
@@ -90,28 +90,28 @@ export default function AddNewItem__Portal() {
          }
       }
 
-      useEventListener(TreeContainerRef.current, 'click', (e) => {
+      useEventListener(treeContainerRef.current, 'click', (e) => {
          if (elementRef.current?.contains(e.target as Node)) return
 
          // if space key pressed and inputElement is focused then don't trigger save event
          if (shouldShowFileInput && document.activeElement == fileInputRef.current) return
          if (shouldShowFolderInput && document.activeElement == folderInputRef.current) return
 
-         handleCreateItem()
+         handleSaveItem()
 
          // disabling this code due forgot why I added it
          // if ((e.target as HTMLElement).nodeName == 'BUTTON') return
       })
 
-      // we can also use TreeContainerRef.current instead of document
+      // we can also use treeContainerRef.current instead of document
       useEventListener(document, 'keydown', (e) => {
          if (e.key != 'Escape') return
-         handleCreateItem()
+         handleSaveItem()
       })
 
       // save on contexmenu
-      useEventListener(TreeContainerRef.current, 'contextmenu', () => {
-         handleCreateItem()
+      useEventListener(treeContainerRef.current, 'contextmenu', () => {
+         handleSaveItem()
       })
 
       return (
@@ -120,7 +120,7 @@ export default function AddNewItem__Portal() {
                onSubmit={(e) => {
                   e.preventDefault()
                   if (error) return
-                  handleCreateItem()
+                  handleSaveItem()
                }}
                className='w-auto p-1 relative'
             >

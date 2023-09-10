@@ -9,19 +9,19 @@ export default function TreeContextMenu() {
    const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
    const Files = useTreeCtxStateSelector((state) => state.Files, false)
    const showTreeContextMenu = useTreeCtxStateSelector((state) => state.showTreeContextMenu)
-   const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
+   const treeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
    const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } =
       useContextActions()
-   const TreeActionDispatch = useTreeStateDispatch()
+   const dispatch = useTreeStateDispatch()
 
    const closeContextMenu = () => {
-      TreeActionDispatch((state) => {
+      dispatch((state) => {
          state.showTreeContextMenu = false
          return state
       })
    }
    const handleRename = () => {
-      TreeActionDispatch((state) => {
+      dispatch((state) => {
          const itemId = FocusedItem?.id ?? ''
          const item = state.Files.get(itemId)
          if (item) {
@@ -34,11 +34,11 @@ export default function TreeContextMenu() {
       closeContextMenu()
    }
 
-   useEventListener(TreeContainerRef.current, 'contextmenu', (e) => {
+   useEventListener(treeContainerRef.current, 'contextmenu', (e) => {
       e.preventDefault()
 
       flushSync(() => {
-         TreeActionDispatch((state) => {
+         dispatch((state) => {
             const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)!
 
             if (!item) {

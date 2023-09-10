@@ -7,28 +7,34 @@ import TreeInputContainer from '../TreeInputContainer/TreeInputContainer'
 import TreeFolder from './TreeFolder/TreeFolder'
 
 export default function FileTree() {
-   const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
+   const treeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
    const RootNode = useTreeCtxStateSelector((state) => state.Files.get('root') as Folder)
    const state = useTreeCtxStateSelector((state) => state)
-   const TreeActionDispatch = useTreeStateDispatch()
+   const dispatch = useTreeStateDispatch()
    const { collapseFolder, expandFolder } = useContextActions()
-
 
    // highlight logic for file/folder
    // collapse-expand logic
-   useEventListener(TreeContainerRef.current, 'click', (e) => {
-      const shouldShowFileInputState = getKeyState(state, (state) => state.shouldShowFileInput)
-      if (shouldShowFileInputState) return
+   useEventListener(treeContainerRef.current, 'click', (e) => {
+      // @ts-ignore
+      const isAnyFileInputVisible = getKeyState(
+         state,
+         (state) => state.shouldShowFileInput || state.shouldShowFolderInput
+      )
+      if (isAnyFileInputVisible) return
+
+      // if clicked file-folder then proceed
       if (
          !(e.target as HTMLElement).classList.contains('file-item') &&
          !(e.target as HTMLElement).classList.contains('folder-item')
-      )
+      ) {
          return
+      }
 
       const itemId = (e.target as HTMLElement).getAttribute('data-id')
       if (!itemId) return
 
-      TreeActionDispatch((state) => {
+      dispatch((state) => {
          const item = state.Files.get(itemId)
          if (!item) return state
 
@@ -53,7 +59,7 @@ export default function FileTree() {
    return (
       <section className='h-[100vh] w-64 border border-gray-700 bg-gray-900 fixed'>
          <TreeInputContainer />
-         <ul ref={TreeContainerRef} className='w-full overflow-auto' style={{ height: 'calc(100vh - 36px)' }}>
+         <ul ref={treeContainerRef} className='w-full overflow-auto h-[calc(100vh-36px)]'>
             {/* {RootNode && <Tree item={RootNode} />} */}
             {RootNode && <TreeFolder folder={RootNode} />}
          </ul>
