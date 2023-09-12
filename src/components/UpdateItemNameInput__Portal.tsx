@@ -3,13 +3,13 @@ import type { ElementRef } from 'react'
 import { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../FileTreeContext/useTreeCtxState'
+import { useContextActions, useStateSelector, useTreeStateDispatch } from '../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../hooks/useEventListener'
 
 export default function UpdateItemNameInput__Portal() {
-   const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
-   const treeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
-   const FocusedItemTarget = useTreeCtxStateSelector((state) => state.FocusedTreeItem.target)
+   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
+   const FocusedItemTarget = useStateSelector((state) => state.FocusedTreeItem.target)
 
    const fileInputRef = useRef<HTMLInputElement>(null)
    const elementRef = useRef<ElementRef<'form'>>(null)
@@ -18,11 +18,11 @@ export default function UpdateItemNameInput__Portal() {
    if (!portalContainer) return null
 
    const PortalElement = () => {
-      const parent: Folder = useTreeCtxStateSelector(
+      const parent: Folder = useStateSelector(
          (state) => state.Files.get(state.Files.get(FocusedItem?.id ?? '')?.parentId ?? '') as Folder,
          false
       )
-      const Files = useTreeCtxStateSelector((state) => state.Files, false)
+      const Files = useStateSelector((state) => state.Files, false)
       const TreeDispatch = useTreeStateDispatch()
       const { hideFileInput, highlightFileOrFolder } = useContextActions()
       const [newName, setName] = useState(FocusedItem?.name ?? '')

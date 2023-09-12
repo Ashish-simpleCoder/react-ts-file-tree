@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react'
 import { useTreeCtx } from './FileTreeContext'
 import { StoreCtxState } from './getTreeCtxData'
 
-export function useTreeCtxStateSelector<SelectorOutput>(
+export function useStateSelector<SelectorOutput>(
    selector: (state: StoreCtxState) => SelectorOutput,
    watch: boolean = true
 ): SelectorOutput {

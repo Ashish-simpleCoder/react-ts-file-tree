@@ -1,5 +1,5 @@
 import type { Folder } from '../../FileTreeContext/Ctx.type'
-import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
+import { useContextActions, useStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../../hooks/useEventListener'
 import { getKeyState } from '../../utils/getKeyState'
 import TreeContextMenu from '../TreeContextMenu/TreeContextMenu'
@@ -7,9 +7,9 @@ import TreeInputContainer from '../TreeInputContainer/TreeInputContainer'
 import TreeFolder from './TreeFolder/TreeFolder'
 
 export default function FileTree() {
-   const treeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
-   const RootNode = useTreeCtxStateSelector((state) => state.Files.get('root') as Folder)
-   const state = useTreeCtxStateSelector((state) => state)
+   const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
+   const RootNode = useStateSelector((state) => state.Files.get('root') as Folder)
+   const state = useStateSelector((state) => state)
    const dispatch = useTreeStateDispatch()
    const { collapseFolder, expandFolder } = useContextActions()
 

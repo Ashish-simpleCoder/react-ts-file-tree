@@ -1,15 +1,15 @@
 import { ElementRef, useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { useEventListener } from '../../hooks/useEventListener'
-import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
+import { useContextActions, useStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import useKeyListener from '../../hooks/useKeyListener'
 
 export default function TreeContextMenu() {
    const ctxMenuRef = useRef<ElementRef<'div'>>(null)
-   const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
-   const Files = useTreeCtxStateSelector((state) => state.Files, false)
-   const showTreeContextMenu = useTreeCtxStateSelector((state) => state.showTreeContextMenu)
-   const treeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
+   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const Files = useStateSelector((state) => state.Files, false)
+   const showTreeContextMenu = useStateSelector((state) => state.showTreeContextMenu)
+   const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
    const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } =
       useContextActions()
    const dispatch = useTreeStateDispatch()
