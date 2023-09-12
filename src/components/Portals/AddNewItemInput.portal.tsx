@@ -80,6 +80,7 @@ export default function AddNewItem__Portal() {
          hideAllInputs()
       }
 
+      // save when clicked any where in tree-container
       useEventListener(treeContainerRef.current, 'click', (e) => {
          if (elementRef.current?.contains(e.target as Node)) return
 
@@ -88,9 +89,6 @@ export default function AddNewItem__Portal() {
          if (shouldShowFolderInput && document.activeElement == folderInputRef.current) return
 
          handleSaveItem()
-
-         // disabling this code due forgot why I added it
-         // if ((e.target as HTMLElement).nodeName == 'BUTTON') return
       })
 
       // we can also use treeContainerRef.current instead of document
