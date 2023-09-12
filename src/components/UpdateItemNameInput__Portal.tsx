@@ -3,7 +3,7 @@ import type { ElementRef } from 'react'
 import { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import { useContextActions, useStateSelector, useTreeStateDispatch } from '../FileTreeContext/useTreeCtxState'
+import { useContextActions, useStateSelector, useStateDispatch } from '../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../hooks/useEventListener'
 
 export default function UpdateItemNameInput__Portal() {
@@ -23,7 +23,7 @@ export default function UpdateItemNameInput__Portal() {
          false
       )
       const Files = useStateSelector((state) => state.Files, false)
-      const TreeDispatch = useTreeStateDispatch()
+      const TreeDispatch = useStateDispatch()
       const { hideFileInput, highlightFileOrFolder } = useContextActions()
       const [newName, setName] = useState(FocusedItem?.name ?? '')
       const [error, setError] = useState<string | null>(null)

@@ -16,7 +16,7 @@ export function useStateSelector<SelectorOutput>(
    return state
 }
 
-export function useTreeStateDispatch() {
+export function useStateDispatch() {
    const FormStore = useTreeCtx()
    if (!FormStore) throw new Error('no form store found.')
 
