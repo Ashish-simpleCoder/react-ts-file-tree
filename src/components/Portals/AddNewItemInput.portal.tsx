@@ -1,20 +1,20 @@
-import type { Folder } from '../FileTreeContext/Ctx.type'
+import type { Folder } from '../../FileTreeContext/Ctx.type'
 import type { ElementRef } from 'react'
 import { useEffect, useRef, useState } from 'react'
-import { createPortal, flushSync } from 'react-dom'
+import { createPortal } from 'react-dom'
 
-import { useContextActions, useTreeCtxStateSelector } from '../FileTreeContext/useTreeCtxState'
-import { useEventListener } from '../hooks/useEventListener'
-import { FileIcon } from './FileTree/TreeFile/TreeFile'
-import { FolderIcon } from './FileTree/TreeFolder/TreeFolder'
+import { useContextActions, useStateSelector } from '../../FileTreeContext/useTreeCtxState'
+import { useEventListener } from '../../hooks/useEventListener'
+import { FileIcon } from '../FileTree/TreeFile/TreeFile'
+import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
 
 export default function AddNewItem__Portal() {
-   const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
-   const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
-   const FocusedItemTarget = useTreeCtxStateSelector((state) => state.FocusedTreeItem.target)
-   const isExpanded = useTreeCtxStateSelector((state) => state.TreeExpandState.get(FocusedItem?.id ?? ''))
-   const shouldShowFolderInput = useTreeCtxStateSelector((state) => state.shouldShowFolderInput)
-   const shouldShowFileInput = useTreeCtxStateSelector((state) => state.shouldShowFileInput)
+   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
+   const FocusedItemTarget = useStateSelector((state) => state.FocusedTreeItem.target)
+   const isExpanded = useStateSelector((state) => state.TreeExpandState.get(FocusedItem?.id ?? ''))
+   const shouldShowFolderInput = useStateSelector((state) => state.shouldShowFolderInput)
+   const shouldShowFileInput = useStateSelector((state) => state.shouldShowFileInput)
 
    const [portalContainer, setPortalContainer] = useState<HTMLElement | null | undefined>(null)
    const elementRef = useRef<ElementRef<'li'>>(null)
@@ -22,7 +22,7 @@ export default function AddNewItem__Portal() {
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
 
-   const { createFile, createFolder, hideFileInput, hideFolderInput, highlightFileOrFolder } = useContextActions()
+   const { createFile, createFolder, hideAllInputs } = useContextActions()
 
    useEffect(() => {
       // checking item type is folder or not
@@ -35,18 +35,18 @@ export default function AddNewItem__Portal() {
          setPortalContainer(portalParentElement?.parentElement?.parentElement?.querySelector('ul'))
       } else {
          // if none, then set it to root container
-         setPortalContainer(TreeContainerRef.current)
+         setPortalContainer(treeContainerRef.current)
       }
    }, [isExpanded])
 
    if (!portalContainer) return null
 
    const PortalElement = () => {
-      const parent: Folder = useTreeCtxStateSelector(
+      const parent: Folder = useStateSelector(
          (state) => state.Files.get(state.Files.get(FocusedItem?.id ?? '')?.parentId ?? '') as Folder,
          false
       )
-      const Files = useTreeCtxStateSelector((state) => state.Files, false)
+      const Files = useStateSelector((state) => state.Files, false)
       const [error, setError] = useState<string | null>(null)
       const [newName, setName] = useState('')
 
@@ -66,52 +66,42 @@ export default function AddNewItem__Portal() {
          })
       }
 
-      const handleCreateItem = () => {
+      const handleSaveItem = () => {
          if (error) {
-            hideFileInput()
-            hideFolderInput()
+            hideAllInputs()
             return
          }
          if (shouldShowFileInput) {
-            let id: string | undefined = ''
-            flushSync(() => {
-               id = createFile({ name: newName })
-            })
-            id && highlightFileOrFolder(id)
-            hideFileInput()
+            createFile({ name: newName })
          }
          if (shouldShowFolderInput) {
-            let id: string | undefined = ''
-            flushSync(() => {
-               id = createFolder({ name: newName })
-            })
-            id && highlightFileOrFolder(id)
-            hideFolderInput()
+            createFolder({ name: newName })
          }
+         hideAllInputs()
       }
 
-      useEventListener(TreeContainerRef.current, 'click', (e) => {
+      useEventListener(treeContainerRef.current, 'click', (e) => {
          if (elementRef.current?.contains(e.target as Node)) return
 
          // if space key pressed and inputElement is focused then don't trigger save event
          if (shouldShowFileInput && document.activeElement == fileInputRef.current) return
          if (shouldShowFolderInput && document.activeElement == folderInputRef.current) return
 
-         handleCreateItem()
+         handleSaveItem()
 
          // disabling this code due forgot why I added it
          // if ((e.target as HTMLElement).nodeName == 'BUTTON') return
       })
 
-      // we can also use TreeContainerRef.current instead of document
+      // we can also use treeContainerRef.current instead of document
       useEventListener(document, 'keydown', (e) => {
          if (e.key != 'Escape') return
-         handleCreateItem()
+         handleSaveItem()
       })
 
       // save on contexmenu
-      useEventListener(TreeContainerRef.current, 'contextmenu', () => {
-         handleCreateItem()
+      useEventListener(treeContainerRef.current, 'contextmenu', () => {
+         handleSaveItem()
       })
 
       return (
@@ -120,7 +110,7 @@ export default function AddNewItem__Portal() {
                onSubmit={(e) => {
                   e.preventDefault()
                   if (error) return
-                  handleCreateItem()
+                  handleSaveItem()
                }}
                className='w-auto p-1 relative'
             >

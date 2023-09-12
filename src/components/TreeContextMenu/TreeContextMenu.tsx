@@ -1,27 +1,27 @@
 import { ElementRef, useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { useEventListener } from '../../hooks/useEventListener'
-import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../../FileTreeContext/useTreeCtxState'
+import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import useKeyListener from '../../hooks/useKeyListener'
 
 export default function TreeContextMenu() {
    const ctxMenuRef = useRef<ElementRef<'div'>>(null)
-   const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
-   const Files = useTreeCtxStateSelector((state) => state.Files, false)
-   const showTreeContextMenu = useTreeCtxStateSelector((state) => state.showTreeContextMenu)
-   const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
+   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const Files = useStateSelector((state) => state.Files, false)
+   const showTreeContextMenu = useStateSelector((state) => state.showTreeContextMenu)
+   const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
    const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } =
       useContextActions()
-   const TreeActionDispatch = useTreeStateDispatch()
+   const dispatch = useStateDispatch()
 
    const closeContextMenu = () => {
-      TreeActionDispatch((state) => {
+      dispatch((state) => {
          state.showTreeContextMenu = false
          return state
       })
    }
    const handleRename = () => {
-      TreeActionDispatch((state) => {
+      dispatch((state) => {
          const itemId = FocusedItem?.id ?? ''
          const item = state.Files.get(itemId)
          if (item) {
@@ -34,11 +34,11 @@ export default function TreeContextMenu() {
       closeContextMenu()
    }
 
-   useEventListener(TreeContainerRef.current, 'contextmenu', (e) => {
+   useEventListener(treeContainerRef.current, 'contextmenu', (e) => {
       e.preventDefault()
 
       flushSync(() => {
-         TreeActionDispatch((state) => {
+         dispatch((state) => {
             const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)!
 
             if (!item) {

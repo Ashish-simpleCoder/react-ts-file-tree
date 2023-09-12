@@ -1,32 +1,29 @@
-import type { Folder } from '../FileTreeContext/Ctx.type'
+import type { Folder } from '../../FileTreeContext/Ctx.type'
 import type { ElementRef } from 'react'
 import { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import { useContextActions, useTreeCtxStateSelector, useTreeStateDispatch } from '../FileTreeContext/useTreeCtxState'
-import { useEventListener } from '../hooks/useEventListener'
+import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
+import { useEventListener } from '../../hooks/useEventListener'
 
 export default function UpdateItemNameInput__Portal() {
-   const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
-   const TreeContainerRef = useTreeCtxStateSelector((state) => state.FilesListRef, false)
-   const FocusedItemTarget = useTreeCtxStateSelector((state) => state.FocusedTreeItem.target)
+   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
+   const FocusedItemTarget = useStateSelector((state) => state.FocusedTreeItem.target)
 
    const fileInputRef = useRef<HTMLInputElement>(null)
    const elementRef = useRef<ElementRef<'form'>>(null)
    const portalContainer = FocusedItemTarget
 
-
-
    if (!portalContainer) return null
-   
 
    const PortalElement = () => {
-      const parent: Folder = useTreeCtxStateSelector(
+      const parent: Folder = useStateSelector(
          (state) => state.Files.get(state.Files.get(FocusedItem?.id ?? '')?.parentId ?? '') as Folder,
          false
       )
-      const Files = useTreeCtxStateSelector((state) => state.Files, false)
-      const TreeDispatch = useTreeStateDispatch()
+      const Files = useStateSelector((state) => state.Files, false)
+      const TreeDispatch = useStateDispatch()
       const { hideFileInput, highlightFileOrFolder } = useContextActions()
       const [newName, setName] = useState(FocusedItem?.name ?? '')
       const [error, setError] = useState<string | null>(null)
@@ -63,7 +60,7 @@ export default function UpdateItemNameInput__Portal() {
          hideFileInput()
       }
 
-      useEventListener(TreeContainerRef.current, 'click', (e) => {
+      useEventListener(treeContainerRef.current, 'click', (e) => {
          if (elementRef.current?.contains(e.target as Node)) return
          // if space key pressed and inputElement is focused then don't trigger save event
          if (document.activeElement == fileInputRef.current) return
@@ -73,11 +70,11 @@ export default function UpdateItemNameInput__Portal() {
          // if ((e.target as HTMLElement).nodeName == 'BUTTON') return
       })
       // save on contexmenu
-      useEventListener(TreeContainerRef.current, 'contextmenu', () => {
+      useEventListener(treeContainerRef.current, 'contextmenu', () => {
          updateItemName()
       })
 
-      // we can also use TreeContainerRef.current instead of document
+      // we can also use treeContainerRef.current instead of document
       useEventListener(document, 'keydown', (e) => {
          if (e.key != 'Escape') return
          updateItemName()

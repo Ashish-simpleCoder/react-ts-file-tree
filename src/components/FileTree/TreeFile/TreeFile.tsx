@@ -1,18 +1,16 @@
 import { SVGProps } from 'react'
 import type { File } from '../../../FileTreeContext/Ctx.type'
-import { useTreeCtxStateSelector } from '../../../FileTreeContext/useTreeCtxState'
+import { useStateSelector } from '../../../FileTreeContext/useTreeCtxState'
 
 export default function TreeFile({ file }: { file: File }) {
-   const isRenaming = useTreeCtxStateSelector((state) => state.Files.get(file.id)?.isRenaming)
-   const isHighlighted = useTreeCtxStateSelector((state) => state.HighlightedItem.id == file.id)
+   const isRenaming = useStateSelector((state) => state.Files.get(file.id)?.isRenaming)
+   const isHighlighted = useStateSelector((state) => state.HighlightedItem.id == file.id)
 
    return (
       <>
          <button
             data-id={file.id}
-            className={`file-item w-full flex items-end p-1 ${
-               isHighlighted ? 'bg-black' : ''
-            }`}
+            className={`file-item w-full flex items-end p-1 ${isHighlighted ? 'bg-black' : ''}`}
             tabIndex={-1}
          >
             <FileIcon height={'16px'} width={'16px'} className='shrink-0 mr-2 pointer-events-none' />

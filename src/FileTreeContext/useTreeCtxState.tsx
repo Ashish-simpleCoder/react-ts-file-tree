@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react'
 import { useTreeCtx } from './FileTreeContext'
 import { StoreCtxState } from './getTreeCtxData'
 
-export function useTreeCtxStateSelector<SelectorOutput>(
+export function useStateSelector<SelectorOutput>(
    selector: (state: StoreCtxState) => SelectorOutput,
    watch: boolean = true
 ): SelectorOutput {
@@ -16,7 +16,7 @@ export function useTreeCtxStateSelector<SelectorOutput>(
    return state
 }
 
-export function useTreeStateDispatch() {
+export function useStateDispatch() {
    const FormStore = useTreeCtx()
    if (!FormStore) throw new Error('no form store found.')
 

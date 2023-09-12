@@ -1,22 +1,16 @@
 import type { SVGProps } from 'react'
 
-import { useContextActions, useTreeCtxStateSelector } from '../../FileTreeContext/useTreeCtxState'
-import AddNewItem__Portal from '../AddNewItemInput__Portal'
-import UpdateItemNameInput__Portal from '../UpdateItemNameInput__Portal'
+import { useContextActions, useStateSelector } from '../../FileTreeContext/useTreeCtxState'
+import AddNewItem__Portal from '../Portals/AddNewItemInput.portal'
+import UpdateItemNameInput__Portal from '../Portals/UpdateItemNameInput.portal'
 
 export default function TreeInputContainer() {
-   const {
-      toggleFolderInputVisibility,
-      toggleFileInputVisibility,
-      collapseTree,
-      refreshTree,
-   } = useContextActions()
+   const { toggleFolderInputVisibility, toggleFileInputVisibility, collapseTree, refreshTree } = useContextActions()
 
-   const shouldShowFolderInput = useTreeCtxStateSelector((state) => state.shouldShowFolderInput)
-   const shouldShowFileInput = useTreeCtxStateSelector((state) => state.shouldShowFileInput)
-   const FocusedItem = useTreeCtxStateSelector((state) => state.FocusedTreeItem.item)
-   const isRenamingItem = useTreeCtxStateSelector((state) => state.isRenamingItem)
-
+   const shouldShowFolderInput = useStateSelector((state) => state.shouldShowFolderInput)
+   const shouldShowFileInput = useStateSelector((state) => state.shouldShowFileInput)
+   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const isRenamingItem = useStateSelector((state) => state.isRenamingItem)
 
    return (
       <div className='py-2 h-9'>
@@ -36,17 +30,22 @@ export default function TreeInputContainer() {
          </div>
 
          {/* portals for creating and updating files */}
-         {(shouldShowFolderInput || shouldShowFileInput) && !isRenamingItem && (
-            <AddNewItem__Portal />
-         )}
-         {shouldShowFileInput && isRenamingItem && <UpdateItemNameInput__Portal/>}
+         {(shouldShowFolderInput || shouldShowFileInput) && !isRenamingItem && <AddNewItem__Portal />}
+         {shouldShowFileInput && isRenamingItem && <UpdateItemNameInput__Portal />}
       </div>
    )
 }
 
 export function MaterialSymbolsRefresh(props: SVGProps<SVGSVGElement>) {
    return (
-      <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 24 24' className='shrink-0' {...props}>
+      <svg
+         xmlns='http://www.w3.org/2000/svg'
+         width='1em'
+         height='1em'
+         viewBox='0 0 24 24'
+         className='shrink-0'
+         {...props}
+      >
          <path
             fill='#888888'
             d='M12 20q-3.35 0-5.675-2.325T4 12q0-3.35 2.325-5.675T12 4q1.725 0 3.3.712T18 6.75V4h2v7h-7V9h4.2q-.8-1.4-2.188-2.2T12 6Q9.5 6 7.75 7.75T6 12q0 2.5 1.75 4.25T12 18q1.925 0 3.475-1.1T17.65 14h2.1q-.7 2.65-2.85 4.325T12 20Z'
@@ -57,7 +56,14 @@ export function MaterialSymbolsRefresh(props: SVGProps<SVGSVGElement>) {
 
 export function CarbonCollapseAll(props: SVGProps<SVGSVGElement>) {
    return (
-      <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 32 32' className='shrink-0' {...props}>
+      <svg
+         xmlns='http://www.w3.org/2000/svg'
+         width='1em'
+         height='1em'
+         viewBox='0 0 32 32'
+         className='shrink-0'
+         {...props}
+      >
          <path fill='#888888' d='M30 15h-2V7H13V5h15a2.002 2.002 0 0 1 2 2Z'></path>
          <path fill='#888888' d='M25 20h-2v-8H8v-2h15a2.002 2.002 0 0 1 2 2Z'></path>
          <path
@@ -70,7 +76,14 @@ export function CarbonCollapseAll(props: SVGProps<SVGSVGElement>) {
 
 export function CodiconNewFile(props: SVGProps<SVGSVGElement>) {
    return (
-      <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 16 16' className='shrink-0' {...props}>
+      <svg
+         xmlns='http://www.w3.org/2000/svg'
+         width='1em'
+         height='1em'
+         viewBox='0 0 16 16'
+         className='shrink-0'
+         {...props}
+      >
          <path
             fill='#888888'
             fillRule='evenodd'
@@ -83,7 +96,14 @@ export function CodiconNewFile(props: SVGProps<SVGSVGElement>) {
 
 export function CodiconNewFolder(props: SVGProps<SVGSVGElement>) {
    return (
-      <svg xmlns='http://www.w3.org/2000/svg' width='1em' height='1em' viewBox='0 0 16 16' className='shrink-0' {...props}>
+      <svg
+         xmlns='http://www.w3.org/2000/svg'
+         width='1em'
+         height='1em'
+         viewBox='0 0 16 16'
+         className='shrink-0'
+         {...props}
+      >
          <path
             fill='#888888'
             fillRule='evenodd'
