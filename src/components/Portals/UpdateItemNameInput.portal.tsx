@@ -1,12 +1,12 @@
-import type { Folder } from '../../FileTreeContext/Ctx.type'
+import type { Folder } from 'src/FileTreeContext/Ctx.type'
 import type { ElementRef } from 'react'
 import { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { If } from 'classic-react-components'
 
-import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
-import { useEventListener } from '../../hooks/useEventListener'
-import AppInput from '../AppComponents/AppInput'
+import { useContextActions, useStateSelector, useStateDispatch } from 'src/FileTreeContext/useTreeCtxState'
+import { useEventListener } from 'src/hooks/useEventListener'
+import AppInput from 'src/components/AppComponents/AppInput'
 
 export default function UpdateItemNameInput__Portal() {
    const focusedNode = useStateSelector((state) => state.FocusedNode.item)

@@ -1,10 +1,10 @@
-import type { Folder } from '../../FileTreeContext/Ctx.type'
+import type { Folder } from 'src/FileTreeContext/Ctx.type'
 import { If } from 'classic-react-components'
-import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
-import { useEventListener } from '../../hooks/useEventListener'
-import { getKeyState } from '../../utils/getKeyState'
-import TreeContextMenu from '../TreeContextMenu/TreeContextMenu'
-import TreeInputContainer from '../TreeInputContainer/TreeInputContainer'
+import { useContextActions, useStateSelector, useStateDispatch } from 'src/FileTreeContext/useTreeCtxState'
+import { useEventListener } from 'src/hooks/useEventListener'
+import { getKeyState } from 'src/utils/getKeyState'
+import TreeContextMenu from 'src/components/TreeContextMenu/TreeContextMenu'
+import TreeInputContainer from 'src/components/TreeInputContainer/TreeInputContainer'
 import TreeFolder from './TreeFolder/TreeFolder'
 
 export default function FileTree() {

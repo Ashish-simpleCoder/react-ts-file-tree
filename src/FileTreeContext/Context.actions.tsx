@@ -1,5 +1,5 @@
 import type { MouseEvent } from 'react'
-import type { PartialBy } from '../types/types'
+import type { PartialBy } from 'src/types/types'
 import type { File, Folder } from './Ctx.type'
 
 import { flushSync } from 'react-dom'

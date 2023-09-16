@@ -1,11 +1,11 @@
 import { ElementRef, useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { If } from 'classic-react-components'
-import { useEventListener } from '../../hooks/useEventListener'
-import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
-import useKeyListener from '../../hooks/useKeyListener'
-import AppContextMenu from '../AppComponents/AppContextMenu'
-import AppLi from '../AppComponents/AppLi'
+import { useEventListener } from 'src/hooks/useEventListener'
+import { useContextActions, useStateSelector, useStateDispatch } from 'src/FileTreeContext/useTreeCtxState'
+import useKeyListener from 'src/hooks/useKeyListener'
+import AppContextMenu from 'src/components/AppComponents/AppContextMenu'
+import AppLi from 'src/components/AppComponents/AppLi'
 
 export default function TreeContextMenu() {
    const ctxMenuRef = useRef<ElementRef<'div'>>(null)

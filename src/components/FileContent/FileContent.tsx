@@ -1,4 +1,4 @@
-import { useStateSelector } from '../../FileTreeContext/useTreeCtxState'
+import { useStateSelector } from 'src/FileTreeContext/useTreeCtxState'
 
 export default function FileContent() {
    const selectedFile = useStateSelector((state) => state.FocusedNode.item?.name)

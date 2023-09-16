@@ -1,10 +1,10 @@
-import type { Folder } from '../../../FileTreeContext/Ctx.type'
+import type { Folder } from 'src/FileTreeContext/Ctx.type'
 import type { SVGProps } from 'react'
 import { If } from 'classic-react-components'
 
-import { useStateSelector } from '../../../FileTreeContext/useTreeCtxState'
-import Tree from '../Tree'
-import AppButton from '../../AppComponents/AppButton'
+import { useStateSelector } from 'src/FileTreeContext/useTreeCtxState'
+import Tree from 'src/components/FileTree/Tree'
+import AppButton from 'src/components/AppComponents/AppButton'
 
 export default function TreeFolder({ folder }: { folder: Folder }) {
    const isFolderExpanded = useStateSelector((state) => state.TreeExpandState.get(folder.id))

@@ -1,16 +1,16 @@
-import type { Folder } from '../../FileTreeContext/Ctx.type'
+import type { Folder } from 'src/FileTreeContext/Ctx.type'
 import type { ElementRef } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { If } from 'classic-react-components'
 
-import { useContextActions, useStateSelector } from '../../FileTreeContext/useTreeCtxState'
-import { useEventListener } from '../../hooks/useEventListener'
-import { FileIcon } from '../FileTree/TreeFile/TreeFile'
-import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
-import AppInput from '../AppComponents/AppInput'
-import AppLi from '../AppComponents/AppLi'
-import AppButton from '../AppComponents/AppButton'
+import { useContextActions, useStateSelector } from 'src/FileTreeContext/useTreeCtxState'
+import { useEventListener } from 'src/hooks/useEventListener'
+import { FileIcon } from 'src/components/FileTree/TreeFile/TreeFile'
+import { FolderIcon } from 'src/components/FileTree/TreeFolder/TreeFolder'
+import AppInput from 'src/components/AppComponents/AppInput'
+import AppLi from 'src/components/AppComponents/AppLi'
+import AppButton from 'src/components/AppComponents/AppButton'
 
 export default function AddNewItem__Portal() {
    const focusedNode = useStateSelector((state) => state.FocusedNode.item)

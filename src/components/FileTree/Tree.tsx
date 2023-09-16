@@ -1,6 +1,6 @@
-import type { File, Folder } from '../../FileTreeContext/Ctx.type'
+import type { File, Folder } from 'src/FileTreeContext/Ctx.type'
 import { Else, If, Then } from 'classic-react-components'
-import AppLi from '../AppComponents/AppLi'
+import AppLi from 'src/components/AppComponents/AppLi'
 import TreeFile from './TreeFile/TreeFile'
 import TreeFolder from './TreeFolder/TreeFolder'
 
