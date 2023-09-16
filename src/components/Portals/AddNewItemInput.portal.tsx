@@ -2,6 +2,7 @@ import type { Folder } from '../../FileTreeContext/Ctx.type'
 import type { ElementRef } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { If } from 'classic-react-components'
 
 import { useContextActions, useStateSelector } from '../../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../../hooks/useEventListener'
@@ -135,7 +136,9 @@ export default function AddNewItem__Portal() {
                      autoFocus
                   />
                </div>
-               {error && <span className='absolute w-full mt-1 top-full left-0 bg-red-500 text-black'>{error}</span>}
+               <If condition={error}>
+                  <span className='absolute w-full mt-1 top-full left-0 bg-red-500 text-black'>{error}</span>
+               </If>
 
                <AppButton type="submit" className='invisible hidden'></AppButton>
             </form>

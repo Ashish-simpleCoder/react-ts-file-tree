@@ -1,5 +1,6 @@
 import type { Folder } from '../../../FileTreeContext/Ctx.type'
 import type { SVGProps } from 'react'
+import { If } from 'classic-react-components'
 
 import { useStateSelector } from '../../../FileTreeContext/useTreeCtxState'
 import Tree from '../Tree'
@@ -14,25 +15,27 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
 
    return (
       <>
-         {folder.id != 'root' && (
+         <If condition={folder.id != 'root'}>
             <AppButton
                data-id={folder.id}
                className={`folder-item w-full flex items-end p-1 ${isHighlighted ? 'bg-black' : ''}`}
                tabIndex={-1}
             >
-               {childrenIds.length > 0 && (
+               <If condition={childrenIds.length > 0}>
                   <RightAngledArrow
                      rotate={isFolderExpanded ? '90deg' : '0deg'}
                      height={'16px'}
                      width={'16px'}
                      className='pointer-events-none shrink-0'
                   />
-               )}
+               </If>
                <FolderIcon height={'16px'} width={'16px'} className='shrink-0 mr-2 pointer-events-none' />
-               {!isRenaming && <span className='leading-5 pointer-events-none whitespace-nowrap'>{folder.name}</span>}
+               <If condition={!isRenaming}>
+                  <span className='leading-5 pointer-events-none whitespace-nowrap'>{folder.name}</span>
+               </If>
             </AppButton>
-         )}
-         {isFolderExpanded && (
+         </If>
+         <If condition={isFolderExpanded}>
             <ul>
                {childrenIds.map((child_id) => {
                   const node = Files.get(child_id)
@@ -42,7 +45,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
                   return null
                })}
             </ul>
-         )}
+         </If>
       </>
    )
 }

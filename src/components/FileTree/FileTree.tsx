@@ -1,4 +1,5 @@
 import type { Folder } from '../../FileTreeContext/Ctx.type'
+import { If } from 'classic-react-components'
 import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../../hooks/useEventListener'
 import { getKeyState } from '../../utils/getKeyState'
@@ -55,7 +56,9 @@ export default function FileTree() {
          <TreeInputContainer />
          <ul ref={treeContainerRef} className='w-full overflow-auto h-[calc(100vh-36px)]'>
             {/* {RootNode && <Tree item={RootNode} />} */}
-            {RootNode && <TreeFolder folder={RootNode} />}
+            <If condition={RootNode}>
+               <TreeFolder folder={RootNode} />
+            </If>
          </ul>
          <TreeContextMenu />
       </section>

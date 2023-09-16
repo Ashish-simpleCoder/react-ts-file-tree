@@ -1,5 +1,6 @@
 import { ElementRef, useRef } from 'react'
 import { flushSync } from 'react-dom'
+import { If } from 'classic-react-components'
 import { useEventListener } from '../../hooks/useEventListener'
 import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import useKeyListener from '../../hooks/useKeyListener'
@@ -106,80 +107,78 @@ export default function TreeContextMenu() {
 
    return (
       <>
-         {shouldShowTreeContextMenu && (
-            <>
-               <AppContextMenu
-                  containerClassName='w-64 rounded-sm border border-gray-700 fixed left-10 bg-slate-800 z-10'
-                  contextMenuRef={ctxMenuRef}
-                  onClose={closeContextMenu}
-               >
-                     {focusedNode?.isFolder && (
-                        <>
-                           <AppLi
-                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
-                              onClick={() => {
-                                 toggleFileInputVisibility()
-                                 closeContextMenu()
-                              }}
-                           >
-                              <span>New File</span>
-                           </AppLi>
-                           <AppLi
-                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
-                              onClick={() => {
-                                 toggleFolderInputVisibility()
-                                 closeContextMenu()
-                              }}
-                           >
-                              <span>New Folder</span>
-                           </AppLi>
-                           {focusedNode.id != 'root' && (
-                              <>
-                                 <AppLi
-                                    className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
-                                    onClick={handleRename}
-                                 >
-                                    <span>Rename</span>
-                                    <span>F2</span>
-                                 </AppLi>
-                                 <AppLi
-                                    className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
-                                    onClick={() => {
-                                       deleteFolder(focusedNode.id)
-                                       closeContextMenu()
-                                    }}
-                                 >
-                                    <span>Delete</span>
-                                    <span>del</span>
-                                 </AppLi>
-                              </>
-                           )}
-                        </>
-                     )}
-                     {!focusedNode?.isFolder && (
-                        <>
-                           <AppLi
-                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
-                              onClick={handleRename}
-                           >
-                              <span>Rename</span>
-                              <span>F2</span>
-                           </AppLi>
-                           <AppLi
-                              className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
-                              onClick={() => {
-                                 focusedNode && deleteFile(focusedNode.id)
-                                 closeContextMenu()
-                              }}
-                           >
-                              <span>Delete</span>
-                              <span>del</span>
-                           </AppLi>
-                        </>
-                     )}
-               </AppContextMenu>
-            </>
-         )}
+         <If condition={shouldShowTreeContextMenu}>
+            <AppContextMenu
+               containerClassName='w-64 rounded-sm border border-gray-700 fixed left-10 bg-slate-800 z-10'
+               contextMenuRef={ctxMenuRef}
+               onClose={closeContextMenu}
+            >
+                  {focusedNode?.isFolder && (
+                     <>
+                        <AppLi
+                           className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
+                           onClick={() => {
+                              toggleFileInputVisibility()
+                              closeContextMenu()
+                           }}
+                        >
+                           <span>New File</span>
+                        </AppLi>
+                        <AppLi
+                           className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
+                           onClick={() => {
+                              toggleFolderInputVisibility()
+                              closeContextMenu()
+                           }}
+                        >
+                           <span>New Folder</span>
+                        </AppLi>
+                        {focusedNode.id != 'root' && (
+                           <>
+                              <AppLi
+                                 className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
+                                 onClick={handleRename}
+                              >
+                                 <span>Rename</span>
+                                 <span>F2</span>
+                              </AppLi>
+                              <AppLi
+                                 className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
+                                 onClick={() => {
+                                    deleteFolder(focusedNode.id)
+                                    closeContextMenu()
+                                 }}
+                              >
+                                 <span>Delete</span>
+                                 <span>del</span>
+                              </AppLi>
+                           </>
+                        )}
+                     </>
+                  )}
+                  {!focusedNode?.isFolder && (
+                     <>
+                        <AppLi
+                           className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
+                           onClick={handleRename}
+                        >
+                           <span>Rename</span>
+                           <span>F2</span>
+                        </AppLi>
+                        <AppLi
+                           className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
+                           onClick={() => {
+                              focusedNode && deleteFile(focusedNode.id)
+                              closeContextMenu()
+                           }}
+                        >
+                           <span>Delete</span>
+                           <span>del</span>
+                        </AppLi>
+                     </>
+                  )}
+            </AppContextMenu>
+         </If>
       </>
    )
 }
