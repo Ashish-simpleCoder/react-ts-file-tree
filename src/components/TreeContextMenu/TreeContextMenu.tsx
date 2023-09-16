@@ -8,10 +8,9 @@ export default function TreeContextMenu() {
    const ctxMenuRef = useRef<ElementRef<'div'>>(null)
    const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
    const Files = useStateSelector((state) => state.Files, false)
-   const showTreeContextMenu = useStateSelector((state) => state.showTreeContextMenu)
+   const shouldShowTreeContextMenu = useStateSelector((state) => state.showTreeContextMenu)
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
-   const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } =
-      useContextActions()
+   const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } = useContextActions()
    const dispatch = useStateDispatch()
 
    const closeContextMenu = () => {
@@ -39,7 +38,7 @@ export default function TreeContextMenu() {
 
       flushSync(() => {
          dispatch((state) => {
-            const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)!
+            const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)
 
             if (!item) {
                state.HighlightedItem.id = 'root'
@@ -87,7 +86,7 @@ export default function TreeContextMenu() {
          }
       },
       {},
-      showTreeContextMenu
+      shouldShowTreeContextMenu
    )
 
    useKeyListener(
@@ -115,11 +114,11 @@ export default function TreeContextMenu() {
       { shouldAddEvent: true, preventDefault: true }
    )
 
-   useKeyListener('keydown', ['Escape'], closeContextMenu, { shouldAddEvent: showTreeContextMenu })
+   useKeyListener('keydown', ['Escape'], closeContextMenu, { shouldAddEvent: shouldShowTreeContextMenu })
 
    return (
       <>
-         {showTreeContextMenu && (
+         {shouldShowTreeContextMenu && (
             <>
                <div
                   id='tree-context-menu'

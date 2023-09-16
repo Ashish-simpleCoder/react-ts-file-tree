@@ -17,10 +17,7 @@ export default function FileTree() {
    // collapse-expand logic
    useEventListener(treeContainerRef.current, 'click', (e) => {
       // @ts-ignore
-      const isAnyFileInputVisible = getKeyState(
-         state,
-         (state) => state.shouldShowFileInput || state.shouldShowFolderInput
-      )
+      const isAnyFileInputVisible = getKeyState( state, (state) => state.shouldShowFileInput || state.shouldShowFolderInput )
       if (isAnyFileInputVisible) return
 
       // if clicked file-folder then proceed
@@ -46,9 +43,6 @@ export default function FileTree() {
                ;(item as Folder).childrenIds.length > 0 && expandFolder(item.id)
             }
          }
-         if (!item.isFolder) {
-         }
-
          state.HighlightedItem.id = item.id
          state.FocusedTreeItem.item = item
          state.FocusedTreeItem.target = e.target
