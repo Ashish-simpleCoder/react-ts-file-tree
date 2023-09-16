@@ -4,6 +4,7 @@ import { useEventListener } from '../../hooks/useEventListener'
 import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import useKeyListener from '../../hooks/useKeyListener'
 import AppContextMenu from '../AppComponents/AppContextMenu'
+import AppLi from '../AppComponents/AppLi'
 
 export default function TreeContextMenu() {
    const ctxMenuRef = useRef<ElementRef<'div'>>(null)
@@ -114,7 +115,7 @@ export default function TreeContextMenu() {
                >
                      {focusedNode?.isFolder && (
                         <>
-                           <li
+                           <AppLi
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
                               onClick={() => {
                                  toggleFileInputVisibility()
@@ -122,8 +123,8 @@ export default function TreeContextMenu() {
                               }}
                            >
                               <span>New File</span>
-                           </li>
-                           <li
+                           </AppLi>
+                           <AppLi
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
                               onClick={() => {
                                  toggleFolderInputVisibility()
@@ -131,17 +132,17 @@ export default function TreeContextMenu() {
                               }}
                            >
                               <span>New Folder</span>
-                           </li>
+                           </AppLi>
                            {focusedNode.id != 'root' && (
                               <>
-                                 <li
+                                 <AppLi
                                     className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                                     onClick={handleRename}
                                  >
                                     <span>Rename</span>
                                     <span>F2</span>
-                                 </li>
-                                 <li
+                                 </AppLi>
+                                 <AppLi
                                     className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                                     onClick={() => {
                                        deleteFolder(focusedNode.id)
@@ -150,21 +151,21 @@ export default function TreeContextMenu() {
                                  >
                                     <span>Delete</span>
                                     <span>del</span>
-                                 </li>
+                                 </AppLi>
                               </>
                            )}
                         </>
                      )}
                      {!focusedNode?.isFolder && (
                         <>
-                           <li
+                           <AppLi
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                               onClick={handleRename}
                            >
                               <span>Rename</span>
                               <span>F2</span>
-                           </li>
-                           <li
+                           </AppLi>
+                           <AppLi
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                               onClick={() => {
                                  focusedNode && deleteFile(focusedNode.id)
@@ -173,7 +174,7 @@ export default function TreeContextMenu() {
                            >
                               <span>Delete</span>
                               <span>del</span>
-                           </li>
+                           </AppLi>
                         </>
                      )}
                </AppContextMenu>

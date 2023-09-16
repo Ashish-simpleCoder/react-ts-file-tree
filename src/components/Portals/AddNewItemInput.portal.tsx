@@ -8,6 +8,7 @@ import { useEventListener } from '../../hooks/useEventListener'
 import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
 import AppInput from '../AppComponents/AppInput'
+import AppLi from '../AppComponents/AppLi'
 
 export default function AddNewItem__Portal() {
    const focusedNode = useStateSelector((state) => state.FocusedNode.item)
@@ -104,7 +105,7 @@ export default function AddNewItem__Portal() {
       })
 
       return (
-         <li className={`${focusedNode?.id == 'root' || !focusedNode?.isFolder ? '' : 'pl-4'}`} ref={elementRef}>
+         <AppLi className={`${focusedNode?.id == 'root' || !focusedNode?.isFolder ? '' : 'pl-4'}`} ref={elementRef}>
             <form
                onSubmit={(e) => {
                   e.preventDefault()
@@ -137,7 +138,7 @@ export default function AddNewItem__Portal() {
 
                <button className='invisible hidden'></button>
             </form>
-         </li>
+         </AppLi>
       )
    }
 
