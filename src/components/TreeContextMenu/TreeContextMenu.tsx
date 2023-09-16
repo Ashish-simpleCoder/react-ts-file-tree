@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom'
 import { If } from 'classic-react-components'
 import { useEventListener } from 'src/hooks/useEventListener'
 import { useContextActions, useStateSelector, useStateDispatch } from 'src/FileTreeContext/useTreeCtxState'
-import useKeyListener from 'src/hooks/useKeyListener'
+import useKeyEventListener from 'src/hooks/useKeyEventListener'
 import AppContextMenu from 'src/components/AppComponents/AppContextMenu'
 import AppLi from 'src/components/AppComponents/AppLi'
 
@@ -80,7 +80,7 @@ export default function TreeContextMenu() {
    })
 
 
-   useKeyListener(
+   useKeyEventListener(
       'keydown',
       ['Delete'],
       (e) => {
@@ -95,7 +95,7 @@ export default function TreeContextMenu() {
       { shouldAddEvent: true }
    )
 
-   useKeyListener(
+   useKeyEventListener(
       'keydown',
       ['F2'],
       () => {
