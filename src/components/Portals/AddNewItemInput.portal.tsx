@@ -7,18 +7,21 @@ import { useContextActions, useStateSelector } from '../../FileTreeContext/useTr
 import { useEventListener } from '../../hooks/useEventListener'
 import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
+import AppInput from '../AppComponents/AppInput'
+import AppLi from '../AppComponents/AppLi'
+import AppButton from '../AppComponents/AppButton'
 
 export default function AddNewItem__Portal() {
-   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const focusedNode = useStateSelector((state) => state.FocusedNode.item)
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
-   const FocusedItemTarget = useStateSelector((state) => state.FocusedTreeItem.target)
-   const isExpanded = useStateSelector((state) => state.TreeExpandState.get(FocusedItem?.id ?? ''))
+   const focusedNodeTarget = useStateSelector((state) => state.FocusedNode.target)
+   const isExpanded = useStateSelector((state) => state.TreeExpandState.get(focusedNode?.id ?? ''))
    const shouldShowFolderInput = useStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useStateSelector((state) => state.shouldShowFileInput)
 
    const [portalContainer, setPortalContainer] = useState<HTMLElement | null | undefined>(null)
    const elementRef = useRef<ElementRef<'li'>>(null)
-   const portalParentElement = (FocusedItemTarget as HTMLButtonElement)?.parentElement
+   const portalParentElement = (focusedNodeTarget as HTMLButtonElement)?.parentElement
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
 
@@ -26,12 +29,12 @@ export default function AddNewItem__Portal() {
 
    useEffect(() => {
       // checking item type is folder or not
-      if (FocusedItem?.isFolder && isExpanded && portalParentElement) {
+      if (focusedNode?.isFolder && isExpanded && portalParentElement) {
          setPortalContainer(portalParentElement.querySelector('ul'))
          return
       }
       // item is not folder then get it's parent element
-      if (FocusedItem && !FocusedItem.isFolder) {
+      if (focusedNode && !focusedNode.isFolder) {
          setPortalContainer(portalParentElement?.parentElement?.parentElement?.querySelector('ul'))
       } else {
          // if none, then set it to root container
@@ -43,7 +46,7 @@ export default function AddNewItem__Portal() {
 
    const PortalElement = () => {
       const parent: Folder = useStateSelector(
-         (state) => state.Files.get(state.Files.get(FocusedItem?.id ?? '')?.parentId ?? '') as Folder,
+         (state) => state.Files.get(state.Files.get(focusedNode?.id ?? '')?.parentId ?? '') as Folder,
          false
       )
       const Files = useStateSelector((state) => state.Files, false)
@@ -80,6 +83,7 @@ export default function AddNewItem__Portal() {
          hideAllInputs()
       }
 
+      // save when clicked any where in tree-container
       useEventListener(treeContainerRef.current, 'click', (e) => {
          if (elementRef.current?.contains(e.target as Node)) return
 
@@ -88,9 +92,6 @@ export default function AddNewItem__Portal() {
          if (shouldShowFolderInput && document.activeElement == folderInputRef.current) return
 
          handleSaveItem()
-
-         // disabling this code due forgot why I added it
-         // if ((e.target as HTMLElement).nodeName == 'BUTTON') return
       })
 
       // we can also use treeContainerRef.current instead of document
@@ -105,7 +106,7 @@ export default function AddNewItem__Portal() {
       })
 
       return (
-         <li className={`${FocusedItem?.id == 'root' || !FocusedItem?.isFolder ? '' : 'pl-4'}`} ref={elementRef}>
+         <AppLi className={`${focusedNode?.id == 'root' || !focusedNode?.isFolder ? '' : 'pl-4'}`} ref={elementRef}>
             <form
                onSubmit={(e) => {
                   e.preventDefault()
@@ -116,29 +117,29 @@ export default function AddNewItem__Portal() {
             >
                <div className={`flex items-center ${shouldShowFileInput ? '' : 'hidden'}`}>
                   <FileIcon className='mr-2 shrink-0' />
-                  <input
+                  <AppInput
                      className='z-10 p-1 h-5 outline-none focus:border leading-5 w-full'
                      placeholder='new file'
-                     ref={fileInputRef}
+                     inputRef={fileInputRef}
                      onChange={(e) => handleChange(e.target.value)}
                      autoFocus
                   />
                </div>
                <div className={`flex items-center ${shouldShowFolderInput ? '' : 'hidden'}`}>
                   <FolderIcon className='mr-2 shrink-0' />
-                  <input
+                  <AppInput
                      className='z-10 p-1 h-5 outline-none focus:border leading-5 w-full'
                      placeholder='new folder'
-                     ref={folderInputRef}
+                     inputRef={folderInputRef}
                      onChange={(e) => handleChange(e.target.value)}
                      autoFocus
                   />
                </div>
                {error && <span className='absolute w-full mt-1 top-full left-0 bg-red-500 text-black'>{error}</span>}
 
-               <button className='invisible hidden'></button>
+               <AppButton type="submit" className='invisible hidden'></AppButton>
             </form>
-         </li>
+         </AppLi>
       )
    }
 

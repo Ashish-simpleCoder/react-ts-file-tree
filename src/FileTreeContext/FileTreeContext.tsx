@@ -87,7 +87,7 @@ export function FileTreeCtxProvider({ children }: { children: ReactNode }) {
          state.TreeExpandState.set('root', true)
 
          // setting
-         state.FocusedTreeItem.item = state.Files.get('root') as Folder
+         state.FocusedNode.item = state.Files.get('root') as Folder
          return state
       }, false)
    }, [])

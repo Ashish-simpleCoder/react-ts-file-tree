@@ -22,7 +22,7 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
       })
    }
    const expandFolder = (folderId?: string) => {
-      const id = folderId || state.get().FocusedTreeItem.item?.id
+      const id = folderId || state.get().FocusedNode.item?.id
       if (!id) return
 
       state.set((state) => {
@@ -32,7 +32,7 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
    }
 
    const collapseFolder = (folderId?: string) => {
-      const id = folderId || state.get().FocusedTreeItem.item?.id
+      const id = folderId || state.get().FocusedNode.item?.id
       if (!id) return
 
       state.set((state) => {
@@ -88,7 +88,7 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
    // add-item api ------------------------------------------
    const createFile = (file: PartialBy<File, 'isFolder' | 'id' | 'parentId' | 'isRenaming' | 'newName'>) => {
       if (!file.name) return
-      if (!file.parentId && !state.get().FocusedTreeItem.item?.id) return
+      if (!file.parentId && !state.get().FocusedNode.item?.id) return
       file.isFolder = false
       file.isRenaming = false
       file.newName = file.name
@@ -96,7 +96,7 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
       const id = file.id ?? Date.now().toString()
       flushSync(() => {
          state.set((state) => {
-            let parentItem = state.Files.get(file.parentId || state.FocusedTreeItem.item!.id || 'root')!
+            let parentItem = state.Files.get(file.parentId || state.FocusedNode.item!.id || 'root')!
 
             if (!parentItem?.isFolder && parentItem?.parentId) {
                parentItem = state.Files.get(parentItem?.parentId)!
@@ -114,7 +114,7 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
       folder: PartialBy<Folder, 'isFolder' | 'id' | 'parentId' | 'childrenIds' | 'isRenaming' | 'newName'>
    ) => {
       if (!folder.name) return
-      if (!folder.parentId && !state.get().FocusedTreeItem.item?.id) return
+      if (!folder.parentId && !state.get().FocusedNode.item?.id) return
 
       folder.isFolder = true
       folder.childrenIds = folder.childrenIds ?? []
@@ -125,7 +125,7 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
 
       flushSync(() => {
          state.set((state) => {
-            let parentItem = state.Files.get(folder.parentId || state.FocusedTreeItem.item!.id || 'root')!
+            let parentItem = state.Files.get(folder.parentId || state.FocusedNode.item!.id || 'root')!
 
             if (!parentItem?.isFolder && parentItem?.parentId) {
                parentItem = state.Files.get(parentItem?.parentId)!
@@ -204,9 +204,9 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
 
       state.set((state) => {
          // @ts-ignore
-         // state.FocusedTreeItem?.target?.classList.remove('bg-black')
-         state.HighlightedItem.id = id
-         state.FocusedTreeItem = {
+         // state.FocusedNode?.target?.classList.remove('bg-black')
+         state.HighlightedNode.id = id
+         state.FocusedNode = {
             item: state.Files.get(id) || null,
             target,
          }

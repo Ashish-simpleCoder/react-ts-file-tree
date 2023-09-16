@@ -3,15 +3,16 @@ import { flushSync } from 'react-dom'
 import { useEventListener } from '../../hooks/useEventListener'
 import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import useKeyListener from '../../hooks/useKeyListener'
+import AppContextMenu from '../AppComponents/AppContextMenu'
+import AppLi from '../AppComponents/AppLi'
 
 export default function TreeContextMenu() {
    const ctxMenuRef = useRef<ElementRef<'div'>>(null)
-   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const focusedNode = useStateSelector((state) => state.FocusedNode.item)
    const Files = useStateSelector((state) => state.Files, false)
-   const showTreeContextMenu = useStateSelector((state) => state.showTreeContextMenu)
+   const shouldShowTreeContextMenu = useStateSelector((state) => state.showTreeContextMenu)
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
-   const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } =
-      useContextActions()
+   const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } = useContextActions()
    const dispatch = useStateDispatch()
 
    const closeContextMenu = () => {
@@ -22,7 +23,7 @@ export default function TreeContextMenu() {
    }
    const handleRename = () => {
       dispatch((state) => {
-         const itemId = FocusedItem?.id ?? ''
+         const itemId = focusedNode?.id ?? ''
          const item = state.Files.get(itemId)
          if (item) {
             item.isRenaming = true
@@ -39,18 +40,18 @@ export default function TreeContextMenu() {
 
       flushSync(() => {
          dispatch((state) => {
-            const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)!
+            const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)
 
             if (!item) {
-               state.HighlightedItem.id = 'root'
-               state.FocusedTreeItem = {
+               state.HighlightedNode.id = 'root'
+               state.FocusedNode = {
                   item: state.Files.get('root')!,
                   target: document.querySelector('button[data-id=root]'),
                }
             } else {
-               state.HighlightedItem.id = item.id
-               state.FocusedTreeItem.item = item
-               state.FocusedTreeItem.target = e.target
+               state.HighlightedNode.id = item.id
+               state.FocusedNode.item = item
+               state.FocusedNode.target = e.target
             }
             state.showTreeContextMenu = true
             return state
@@ -77,18 +78,6 @@ export default function TreeContextMenu() {
       menu.style.top = top + 'px'
    })
 
-   useEventListener(
-      document,
-      'click',
-      (e) => {
-         const contextMenu = ctxMenuRef.current
-         if (!contextMenu?.contains(e.target as Node)) {
-            closeContextMenu()
-         }
-      },
-      {},
-      showTreeContextMenu
-   )
 
    useKeyListener(
       'keydown',
@@ -110,26 +99,23 @@ export default function TreeContextMenu() {
       ['F2'],
       () => {
          handleRename()
-         expandFolder(FocusedItem?.id)
+         expandFolder(focusedNode?.id)
       },
       { shouldAddEvent: true, preventDefault: true }
    )
 
-   useKeyListener('keydown', ['Escape'], closeContextMenu, { shouldAddEvent: showTreeContextMenu })
-
    return (
       <>
-         {showTreeContextMenu && (
+         {shouldShowTreeContextMenu && (
             <>
-               <div
-                  id='tree-context-menu'
-                  className='w-64 rounded-sm border border-gray-700 fixed left-10 bg-slate-800 z-10'
-                  ref={ctxMenuRef}
+               <AppContextMenu
+                  containerClassName='w-64 rounded-sm border border-gray-700 fixed left-10 bg-slate-800 z-10'
+                  contextMenuRef={ctxMenuRef}
+                  onClose={closeContextMenu}
                >
-                  <ul>
-                     {FocusedItem?.isFolder && (
+                     {focusedNode?.isFolder && (
                         <>
-                           <li
+                           <AppLi
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
                               onClick={() => {
                                  toggleFileInputVisibility()
@@ -137,8 +123,8 @@ export default function TreeContextMenu() {
                               }}
                            >
                               <span>New File</span>
-                           </li>
-                           <li
+                           </AppLi>
+                           <AppLi
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
                               onClick={() => {
                                  toggleFolderInputVisibility()
@@ -146,54 +132,52 @@ export default function TreeContextMenu() {
                               }}
                            >
                               <span>New Folder</span>
-                           </li>
-                           {FocusedItem.id != 'root' && (
+                           </AppLi>
+                           {focusedNode.id != 'root' && (
                               <>
-                                 <li
+                                 <AppLi
                                     className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                                     onClick={handleRename}
                                  >
                                     <span>Rename</span>
                                     <span>F2</span>
-                                 </li>
-                                 <li
+                                 </AppLi>
+                                 <AppLi
                                     className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                                     onClick={() => {
-                                       deleteFolder(FocusedItem.id)
+                                       deleteFolder(focusedNode.id)
                                        closeContextMenu()
                                     }}
                                  >
                                     <span>Delete</span>
                                     <span>del</span>
-                                 </li>
+                                 </AppLi>
                               </>
                            )}
                         </>
                      )}
-                     {!FocusedItem?.isFolder && (
+                     {!focusedNode?.isFolder && (
                         <>
-                           <li
+                           <AppLi
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                               onClick={handleRename}
                            >
                               <span>Rename</span>
                               <span>F2</span>
-                           </li>
-                           <li
+                           </AppLi>
+                           <AppLi
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                               onClick={() => {
-                                 FocusedItem && deleteFile(FocusedItem.id)
+                                 focusedNode && deleteFile(focusedNode.id)
                                  closeContextMenu()
                               }}
                            >
                               <span>Delete</span>
                               <span>del</span>
-                           </li>
+                           </AppLi>
                         </>
                      )}
-                  </ul>
-               </div>
-               {/* <div className='tree-context-menu-overlay fixed inset-0'></div> */}
+               </AppContextMenu>
             </>
          )}
       </>

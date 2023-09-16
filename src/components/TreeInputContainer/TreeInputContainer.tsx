@@ -3,30 +3,31 @@ import type { SVGProps } from 'react'
 import { useContextActions, useStateSelector } from '../../FileTreeContext/useTreeCtxState'
 import AddNewItem__Portal from '../Portals/AddNewItemInput.portal'
 import UpdateItemNameInput__Portal from '../Portals/UpdateItemNameInput.portal'
+import AppButton from '../AppComponents/AppButton'
 
 export default function TreeInputContainer() {
    const { toggleFolderInputVisibility, toggleFileInputVisibility, collapseTree, refreshTree } = useContextActions()
 
    const shouldShowFolderInput = useStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useStateSelector((state) => state.shouldShowFileInput)
-   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const focusedNode = useStateSelector((state) => state.FocusedNode.item)
    const isRenamingItem = useStateSelector((state) => state.isRenamingItem)
 
    return (
       <div className='py-2 h-9'>
          <div className='px-2 flex justify-end gap-1'>
-            <button onClick={toggleFolderInputVisibility} title={'New folder in ' + FocusedItem?.name}>
+            <AppButton onClick={toggleFolderInputVisibility} title={'New folder in ' + focusedNode?.name}>
                <CodiconNewFolder />
-            </button>
-            <button onClick={toggleFileInputVisibility} title={'New file in ' + FocusedItem?.name}>
+            </AppButton>
+            <AppButton onClick={toggleFileInputVisibility} title={'New file in ' + focusedNode?.name}>
                <CodiconNewFile />
-            </button>
-            <button onClick={refreshTree} title='Refresh Tree'>
+            </AppButton>
+            <AppButton onClick={refreshTree} title='Refresh Tree'>
                <MaterialSymbolsRefresh />
-            </button>
-            <button onClick={collapseTree} title='Collapse Folders in Explorer'>
+            </AppButton>
+            <AppButton onClick={collapseTree} title='Collapse Folders in Explorer'>
                <CarbonCollapseAll />
-            </button>
+            </AppButton>
          </div>
 
          {/* portals for creating and updating files */}

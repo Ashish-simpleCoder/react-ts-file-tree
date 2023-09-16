@@ -5,27 +5,28 @@ import { createPortal } from 'react-dom'
 
 import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../../hooks/useEventListener'
+import AppInput from '../AppComponents/AppInput'
 
 export default function UpdateItemNameInput__Portal() {
-   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const focusedNode = useStateSelector((state) => state.FocusedNode.item)
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
-   const FocusedItemTarget = useStateSelector((state) => state.FocusedTreeItem.target)
+   const focusedNodeTarget = useStateSelector((state) => state.FocusedNode.target)
 
    const fileInputRef = useRef<HTMLInputElement>(null)
    const elementRef = useRef<ElementRef<'form'>>(null)
-   const portalContainer = FocusedItemTarget
+   const portalContainer = focusedNodeTarget
 
    if (!portalContainer) return null
 
    const PortalElement = () => {
       const parent: Folder = useStateSelector(
-         (state) => state.Files.get(state.Files.get(FocusedItem?.id ?? '')?.parentId ?? '') as Folder,
+         (state) => state.Files.get(state.Files.get(focusedNode?.id ?? '')?.parentId ?? '') as Folder,
          false
       )
       const Files = useStateSelector((state) => state.Files, false)
       const TreeDispatch = useStateDispatch()
       const { hideFileInput, highlightFileOrFolder } = useContextActions()
-      const [newName, setName] = useState(FocusedItem?.name ?? '')
+      const [newName, setName] = useState(focusedNode?.name ?? '')
       const [error, setError] = useState<string | null>(null)
 
       const handleChange = (value: string) => {
@@ -45,9 +46,9 @@ export default function UpdateItemNameInput__Portal() {
       }
 
       const updateItemName = () => {
-         if (!FocusedItem) return
+         if (!focusedNode) return
          TreeDispatch((state) => {
-            const item = state.Files.get(FocusedItem?.id ?? '')
+            const item = state.Files.get(focusedNode?.id ?? '')
             if (!item) return state
             if (!error) {
                item.name = newName
@@ -56,7 +57,7 @@ export default function UpdateItemNameInput__Portal() {
             state.isRenamingItem = false
             return state
          })
-         highlightFileOrFolder(FocusedItem.id)
+         highlightFileOrFolder(focusedNode.id)
          hideFileInput()
       }
 
@@ -91,12 +92,12 @@ export default function UpdateItemNameInput__Portal() {
             ref={elementRef}
          >
             <span>
-               <input
+               <AppInput
                   className='z-10 h-5 outline-none focus:border leading-5 w-full'
                   placeholder='new file'
                   value={newName}
                   onChange={(e) => handleChange(e.target.value)}
-                  ref={fileInputRef}
+                  inputRef={fileInputRef}
                   autoFocus
                />
             </span>
