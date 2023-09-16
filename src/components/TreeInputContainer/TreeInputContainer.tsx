@@ -9,16 +9,16 @@ export default function TreeInputContainer() {
 
    const shouldShowFolderInput = useStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useStateSelector((state) => state.shouldShowFileInput)
-   const FocusedItem = useStateSelector((state) => state.FocusedNode.item)
+   const focusedNode = useStateSelector((state) => state.FocusedNode.item)
    const isRenamingItem = useStateSelector((state) => state.isRenamingItem)
 
    return (
       <div className='py-2 h-9'>
          <div className='px-2 flex justify-end gap-1'>
-            <button onClick={toggleFolderInputVisibility} title={'New folder in ' + FocusedItem?.name}>
+            <button onClick={toggleFolderInputVisibility} title={'New folder in ' + focusedNode?.name}>
                <CodiconNewFolder />
             </button>
-            <button onClick={toggleFileInputVisibility} title={'New file in ' + FocusedItem?.name}>
+            <button onClick={toggleFileInputVisibility} title={'New file in ' + focusedNode?.name}>
                <CodiconNewFile />
             </button>
             <button onClick={refreshTree} title='Refresh Tree'>

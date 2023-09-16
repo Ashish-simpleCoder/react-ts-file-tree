@@ -7,7 +7,7 @@ import AppContextMenu from '../AppComponents/AppContextMenu'
 
 export default function TreeContextMenu() {
    const ctxMenuRef = useRef<ElementRef<'div'>>(null)
-   const FocusedItem = useStateSelector((state) => state.FocusedNode.item)
+   const focusedNode = useStateSelector((state) => state.FocusedNode.item)
    const Files = useStateSelector((state) => state.Files, false)
    const shouldShowTreeContextMenu = useStateSelector((state) => state.showTreeContextMenu)
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
@@ -22,7 +22,7 @@ export default function TreeContextMenu() {
    }
    const handleRename = () => {
       dispatch((state) => {
-         const itemId = FocusedItem?.id ?? ''
+         const itemId = focusedNode?.id ?? ''
          const item = state.Files.get(itemId)
          if (item) {
             item.isRenaming = true
@@ -98,7 +98,7 @@ export default function TreeContextMenu() {
       ['F2'],
       () => {
          handleRename()
-         expandFolder(FocusedItem?.id)
+         expandFolder(focusedNode?.id)
       },
       { shouldAddEvent: true, preventDefault: true }
    )
@@ -112,7 +112,7 @@ export default function TreeContextMenu() {
                   contextMenuRef={ctxMenuRef}
                   onClose={closeContextMenu}
                >
-                     {FocusedItem?.isFolder && (
+                     {focusedNode?.isFolder && (
                         <>
                            <li
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700'
@@ -132,7 +132,7 @@ export default function TreeContextMenu() {
                            >
                               <span>New Folder</span>
                            </li>
-                           {FocusedItem.id != 'root' && (
+                           {focusedNode.id != 'root' && (
                               <>
                                  <li
                                     className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
@@ -144,7 +144,7 @@ export default function TreeContextMenu() {
                                  <li
                                     className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                                     onClick={() => {
-                                       deleteFolder(FocusedItem.id)
+                                       deleteFolder(focusedNode.id)
                                        closeContextMenu()
                                     }}
                                  >
@@ -155,7 +155,7 @@ export default function TreeContextMenu() {
                            )}
                         </>
                      )}
-                     {!FocusedItem?.isFolder && (
+                     {!focusedNode?.isFolder && (
                         <>
                            <li
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
@@ -167,7 +167,7 @@ export default function TreeContextMenu() {
                            <li
                               className='cursor-pointer p-1 border border-x-0 border-t-0 border-gray-700 hover:bg-purple-700 flex justify-between'
                               onClick={() => {
-                                 FocusedItem && deleteFile(FocusedItem.id)
+                                 focusedNode && deleteFile(focusedNode.id)
                                  closeContextMenu()
                               }}
                            >

@@ -9,16 +9,16 @@ import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
 
 export default function AddNewItem__Portal() {
-   const FocusedItem = useStateSelector((state) => state.FocusedNode.item)
+   const focusedNode = useStateSelector((state) => state.FocusedNode.item)
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
-   const FocusedItemTarget = useStateSelector((state) => state.FocusedNode.target)
-   const isExpanded = useStateSelector((state) => state.TreeExpandState.get(FocusedItem?.id ?? ''))
+   const focusedNodeTarget = useStateSelector((state) => state.FocusedNode.target)
+   const isExpanded = useStateSelector((state) => state.TreeExpandState.get(focusedNode?.id ?? ''))
    const shouldShowFolderInput = useStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useStateSelector((state) => state.shouldShowFileInput)
 
    const [portalContainer, setPortalContainer] = useState<HTMLElement | null | undefined>(null)
    const elementRef = useRef<ElementRef<'li'>>(null)
-   const portalParentElement = (FocusedItemTarget as HTMLButtonElement)?.parentElement
+   const portalParentElement = (focusedNodeTarget as HTMLButtonElement)?.parentElement
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
 
@@ -26,12 +26,12 @@ export default function AddNewItem__Portal() {
 
    useEffect(() => {
       // checking item type is folder or not
-      if (FocusedItem?.isFolder && isExpanded && portalParentElement) {
+      if (focusedNode?.isFolder && isExpanded && portalParentElement) {
          setPortalContainer(portalParentElement.querySelector('ul'))
          return
       }
       // item is not folder then get it's parent element
-      if (FocusedItem && !FocusedItem.isFolder) {
+      if (focusedNode && !focusedNode.isFolder) {
          setPortalContainer(portalParentElement?.parentElement?.parentElement?.querySelector('ul'))
       } else {
          // if none, then set it to root container
@@ -43,7 +43,7 @@ export default function AddNewItem__Portal() {
 
    const PortalElement = () => {
       const parent: Folder = useStateSelector(
-         (state) => state.Files.get(state.Files.get(FocusedItem?.id ?? '')?.parentId ?? '') as Folder,
+         (state) => state.Files.get(state.Files.get(focusedNode?.id ?? '')?.parentId ?? '') as Folder,
          false
       )
       const Files = useStateSelector((state) => state.Files, false)
@@ -103,7 +103,7 @@ export default function AddNewItem__Portal() {
       })
 
       return (
-         <li className={`${FocusedItem?.id == 'root' || !FocusedItem?.isFolder ? '' : 'pl-4'}`} ref={elementRef}>
+         <li className={`${focusedNode?.id == 'root' || !focusedNode?.isFolder ? '' : 'pl-4'}`} ref={elementRef}>
             <form
                onSubmit={(e) => {
                   e.preventDefault()
