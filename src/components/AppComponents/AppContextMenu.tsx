@@ -1,5 +1,5 @@
 import type { ElementRef, ReactNode, RefObject } from 'react'
-import useKeyListener from 'src/hooks/useKeyListener'
+import useKeyEventListener from 'src/hooks/useKeyEventListener'
 import { useEventListener } from 'src/hooks/useEventListener'
 
 interface AppContextMenuProps {
@@ -14,7 +14,7 @@ interface AppContextMenuProps {
 export default function AppContextMenu(props: AppContextMenuProps) {
    const { children, contextMenuRef, containerClassName = '', ulClassName = '', onClose = () => {} } = props
 
-   useKeyListener('keydown', ['Escape'], onClose)
+   useKeyEventListener('keydown', ['Escape'], onClose)
    useEventListener(document, 'click', (e) => {
       if (!contextMenuRef.current?.contains(e.target as Node)) {
          onClose()

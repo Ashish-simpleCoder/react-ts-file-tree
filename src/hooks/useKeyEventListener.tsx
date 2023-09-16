@@ -3,7 +3,7 @@ import { useEventListener } from "./useEventListener";
 
 type Options = boolean | AddEventListenerOptions;
 
-export default function useKeyListener<K extends keyof GlobalEventHandlersEventMap>(
+export default function useKeyEventListener<K extends keyof GlobalEventHandlersEventMap>(
     type: K,
     keys: string[],
     handler: (event: GlobalEventHandlersEventMap[K]) => void,
