@@ -1,6 +1,7 @@
 import { SVGProps } from 'react'
 import type { File } from '../../../FileTreeContext/Ctx.type'
 import { useStateSelector } from '../../../FileTreeContext/useTreeCtxState'
+import AppButton from '../../AppComponents/AppButton'
 
 export default function TreeFile({ file }: { file: File }) {
    const isRenaming = useStateSelector((state) => state.Files.get(file.id)?.isRenaming)
@@ -8,14 +9,14 @@ export default function TreeFile({ file }: { file: File }) {
 
    return (
       <>
-         <button
+         <AppButton
             data-id={file.id}
             className={`file-item w-full flex items-end p-1 ${isHighlighted ? 'bg-black' : ''}`}
             tabIndex={-1}
          >
             <FileIcon height={'16px'} width={'16px'} className='shrink-0 mr-2 pointer-events-none' />
             {!isRenaming && <span className='leading-5 pointer-events-none whitespace-nowrap'>{file.name}</span>}
-         </button>
+         </AppButton>
       </>
    )
 }

@@ -3,6 +3,7 @@ import type { SVGProps } from 'react'
 
 import { useStateSelector } from '../../../FileTreeContext/useTreeCtxState'
 import Tree from '../Tree'
+import AppButton from '../../AppComponents/AppButton'
 
 export default function TreeFolder({ folder }: { folder: Folder }) {
    const isFolderExpanded = useStateSelector((state) => state.TreeExpandState.get(folder.id))
@@ -14,7 +15,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
    return (
       <>
          {folder.id != 'root' && (
-            <button
+            <AppButton
                data-id={folder.id}
                className={`folder-item w-full flex items-end p-1 ${isHighlighted ? 'bg-black' : ''}`}
                tabIndex={-1}
@@ -29,7 +30,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
                )}
                <FolderIcon height={'16px'} width={'16px'} className='shrink-0 mr-2 pointer-events-none' />
                {!isRenaming && <span className='leading-5 pointer-events-none whitespace-nowrap'>{folder.name}</span>}
-            </button>
+            </AppButton>
          )}
          {isFolderExpanded && (
             <ul>

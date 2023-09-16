@@ -9,6 +9,7 @@ import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
 import AppInput from '../AppComponents/AppInput'
 import AppLi from '../AppComponents/AppLi'
+import AppButton from '../AppComponents/AppButton'
 
 export default function AddNewItem__Portal() {
    const focusedNode = useStateSelector((state) => state.FocusedNode.item)
@@ -136,7 +137,7 @@ export default function AddNewItem__Portal() {
                </div>
                {error && <span className='absolute w-full mt-1 top-full left-0 bg-red-500 text-black'>{error}</span>}
 
-               <button className='invisible hidden'></button>
+               <AppButton type="submit" className='invisible hidden'></AppButton>
             </form>
          </AppLi>
       )
