@@ -21,7 +21,6 @@ export default function AddNewItem__Portal() {
    const shouldShowFileInput = useStateSelector((state) => state.shouldShowFileInput)
 
    const [portalContainer, setPortalContainer] = useState<HTMLElement | null | undefined>(null)
-   const elementRef = useRef<ElementRef<'li'>>(null)
    const portalParentElement = (focusedNodeTarget as HTMLButtonElement)?.parentElement
    const fileInputRef = useRef<HTMLInputElement>(null)
    const folderInputRef = useRef<HTMLInputElement>(null)
@@ -53,6 +52,8 @@ export default function AddNewItem__Portal() {
       const Files = useStateSelector((state) => state.Files, false)
       const [error, setError] = useState<string | null>(null)
       const [newName, setName] = useState('')
+      const elementRef = useRef<ElementRef<'li'>>(null)
+
 
       const handleChange = (value: string) => {
          setName(value)
@@ -107,7 +108,7 @@ export default function AddNewItem__Portal() {
       })
 
       return (
-         <AppLi className={`${focusedNode?.id == 'root' || !focusedNode?.isFolder ? '' : 'pl-4'}`} ref={elementRef}>
+         <AppLi className={`${focusedNode?.id == 'root' || !focusedNode?.isFolder ? '' : 'pl-4'}`} liRef={elementRef}>
             <form
                onSubmit={(e) => {
                   e.preventDefault()
