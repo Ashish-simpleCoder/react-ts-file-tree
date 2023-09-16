@@ -1,11 +1,11 @@
 import { MutableRefObject, useCallback, useRef } from 'react'
-import { FileTreeType, FocusedItem } from './Ctx.type'
+import { FileTreeType, TFocusedNode } from './Ctx.type'
 
 export type StoreCtxState = {
    Files: FileTreeType
    FilesListRef: MutableRefObject<HTMLUListElement | null>
    TreeExpandState: Map<string, boolean>
-   FocusedNode: FocusedItem
+   FocusedNode: TFocusedNode
    shouldShowFolderInput: boolean
    shouldShowFileInput: boolean
    showTreeContextMenu: boolean
