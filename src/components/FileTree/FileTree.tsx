@@ -43,9 +43,9 @@ export default function FileTree() {
                ;(item as Folder).childrenIds.length > 0 && expandFolder(item.id)
             }
          }
-         state.HighlightedItem.id = item.id
-         state.FocusedTreeItem.item = item
-         state.FocusedTreeItem.target = e.target
+         state.HighlightedNode.id = item.id
+         state.FocusedNode.item = item
+         state.FocusedNode.target = e.target
          return state
       })
    })

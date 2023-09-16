@@ -7,9 +7,9 @@ import { useContextActions, useStateSelector, useStateDispatch } from '../../Fil
 import { useEventListener } from '../../hooks/useEventListener'
 
 export default function UpdateItemNameInput__Portal() {
-   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const FocusedItem = useStateSelector((state) => state.FocusedNode.item)
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
-   const FocusedItemTarget = useStateSelector((state) => state.FocusedTreeItem.target)
+   const FocusedItemTarget = useStateSelector((state) => state.FocusedNode.target)
 
    const fileInputRef = useRef<HTMLInputElement>(null)
    const elementRef = useRef<ElementRef<'form'>>(null)

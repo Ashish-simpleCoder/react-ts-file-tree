@@ -9,7 +9,7 @@ export default function TreeInputContainer() {
 
    const shouldShowFolderInput = useStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useStateSelector((state) => state.shouldShowFileInput)
-   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const FocusedItem = useStateSelector((state) => state.FocusedNode.item)
    const isRenamingItem = useStateSelector((state) => state.isRenamingItem)
 
    return (

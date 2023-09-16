@@ -6,7 +6,7 @@ import useKeyListener from '../../hooks/useKeyListener'
 
 export default function TreeContextMenu() {
    const ctxMenuRef = useRef<ElementRef<'div'>>(null)
-   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const FocusedItem = useStateSelector((state) => state.FocusedNode.item)
    const Files = useStateSelector((state) => state.Files, false)
    const shouldShowTreeContextMenu = useStateSelector((state) => state.showTreeContextMenu)
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
@@ -41,15 +41,15 @@ export default function TreeContextMenu() {
             const item = state.Files.get((e.target as HTMLButtonElement).getAttribute('data-id')!)
 
             if (!item) {
-               state.HighlightedItem.id = 'root'
-               state.FocusedTreeItem = {
+               state.HighlightedNode.id = 'root'
+               state.FocusedNode = {
                   item: state.Files.get('root')!,
                   target: document.querySelector('button[data-id=root]'),
                }
             } else {
-               state.HighlightedItem.id = item.id
-               state.FocusedTreeItem.item = item
-               state.FocusedTreeItem.target = e.target
+               state.HighlightedNode.id = item.id
+               state.FocusedNode.item = item
+               state.FocusedNode.target = e.target
             }
             state.showTreeContextMenu = true
             return state

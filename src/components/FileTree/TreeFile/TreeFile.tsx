@@ -4,7 +4,7 @@ import { useStateSelector } from '../../../FileTreeContext/useTreeCtxState'
 
 export default function TreeFile({ file }: { file: File }) {
    const isRenaming = useStateSelector((state) => state.Files.get(file.id)?.isRenaming)
-   const isHighlighted = useStateSelector((state) => state.HighlightedItem.id == file.id)
+   const isHighlighted = useStateSelector((state) => state.HighlightedNode.id == file.id)
 
    return (
       <>

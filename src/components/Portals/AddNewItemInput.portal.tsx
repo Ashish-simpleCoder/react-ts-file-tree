@@ -9,9 +9,9 @@ import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
 
 export default function AddNewItem__Portal() {
-   const FocusedItem = useStateSelector((state) => state.FocusedTreeItem.item)
+   const FocusedItem = useStateSelector((state) => state.FocusedNode.item)
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
-   const FocusedItemTarget = useStateSelector((state) => state.FocusedTreeItem.target)
+   const FocusedItemTarget = useStateSelector((state) => state.FocusedNode.target)
    const isExpanded = useStateSelector((state) => state.TreeExpandState.get(FocusedItem?.id ?? ''))
    const shouldShowFolderInput = useStateSelector((state) => state.shouldShowFolderInput)
    const shouldShowFileInput = useStateSelector((state) => state.shouldShowFileInput)

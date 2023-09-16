@@ -9,7 +9,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
    const childrenIds = useStateSelector((state) => (state.Files.get(folder.id) as Folder).childrenIds)
    const Files = useStateSelector((state) => state.Files)
    const isRenaming = useStateSelector((state) => state.Files.get(folder.id)?.isRenaming)
-   const isHighlighted = useStateSelector((state) => state.HighlightedItem.id == folder.id)
+   const isHighlighted = useStateSelector((state) => state.HighlightedNode.id == folder.id)
 
    return (
       <>

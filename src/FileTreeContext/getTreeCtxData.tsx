@@ -5,12 +5,12 @@ export type StoreCtxState = {
    Files: FileTreeType
    FilesListRef: MutableRefObject<HTMLUListElement | null>
    TreeExpandState: Map<string, boolean>
-   FocusedTreeItem: FocusedItem
+   FocusedNode: FocusedItem
    shouldShowFolderInput: boolean
    shouldShowFileInput: boolean
    showTreeContextMenu: boolean
    isRenamingItem: boolean
-   HighlightedItem: { id: string | null }
+   HighlightedNode: { id: string | null }
 }
 
 export type StoreCtxData = {
@@ -24,7 +24,7 @@ export default function getTreeCtxData(): StoreCtxData {
       Files: new Map(),
       FilesListRef: { current: null },
       TreeExpandState: new Map(),
-      FocusedTreeItem: {
+      FocusedNode: {
          item: null,
          target: null,
       },
@@ -32,7 +32,7 @@ export default function getTreeCtxData(): StoreCtxData {
       shouldShowFileInput: false,
       showTreeContextMenu: false,
       isRenamingItem: false,
-      HighlightedItem: { id: "" }
+      HighlightedNode: { id: "" }
    })
 
    const observers = useRef(new Set<() => void>())
