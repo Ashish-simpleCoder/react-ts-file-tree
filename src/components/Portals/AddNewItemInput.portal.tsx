@@ -7,6 +7,7 @@ import { useContextActions, useStateSelector } from '../../FileTreeContext/useTr
 import { useEventListener } from '../../hooks/useEventListener'
 import { FileIcon } from '../FileTree/TreeFile/TreeFile'
 import { FolderIcon } from '../FileTree/TreeFolder/TreeFolder'
+import AppInput from '../AppComponents/AppInput'
 
 export default function AddNewItem__Portal() {
    const focusedNode = useStateSelector((state) => state.FocusedNode.item)
@@ -114,20 +115,20 @@ export default function AddNewItem__Portal() {
             >
                <div className={`flex items-center ${shouldShowFileInput ? '' : 'hidden'}`}>
                   <FileIcon className='mr-2 shrink-0' />
-                  <input
+                  <AppInput
                      className='z-10 p-1 h-5 outline-none focus:border leading-5 w-full'
                      placeholder='new file'
-                     ref={fileInputRef}
+                     inputRef={fileInputRef}
                      onChange={(e) => handleChange(e.target.value)}
                      autoFocus
                   />
                </div>
                <div className={`flex items-center ${shouldShowFolderInput ? '' : 'hidden'}`}>
                   <FolderIcon className='mr-2 shrink-0' />
-                  <input
+                  <AppInput
                      className='z-10 p-1 h-5 outline-none focus:border leading-5 w-full'
                      placeholder='new folder'
-                     ref={folderInputRef}
+                     inputRef={folderInputRef}
                      onChange={(e) => handleChange(e.target.value)}
                      autoFocus
                   />

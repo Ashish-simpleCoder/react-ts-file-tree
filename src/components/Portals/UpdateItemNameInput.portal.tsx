@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 
 import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import { useEventListener } from '../../hooks/useEventListener'
+import AppInput from '../AppComponents/AppInput'
 
 export default function UpdateItemNameInput__Portal() {
    const focusedNode = useStateSelector((state) => state.FocusedNode.item)
@@ -91,12 +92,12 @@ export default function UpdateItemNameInput__Portal() {
             ref={elementRef}
          >
             <span>
-               <input
+               <AppInput
                   className='z-10 h-5 outline-none focus:border leading-5 w-full'
                   placeholder='new file'
                   value={newName}
                   onChange={(e) => handleChange(e.target.value)}
-                  ref={fileInputRef}
+                  inputRef={fileInputRef}
                   autoFocus
                />
             </span>
