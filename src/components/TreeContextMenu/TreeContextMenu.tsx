@@ -3,6 +3,7 @@ import { flushSync } from 'react-dom'
 import { useEventListener } from '../../hooks/useEventListener'
 import { useContextActions, useStateSelector, useStateDispatch } from '../../FileTreeContext/useTreeCtxState'
 import useKeyListener from '../../hooks/useKeyListener'
+import AppContextMenu from '../AppComponents/AppContextMenu'
 
 export default function TreeContextMenu() {
    const ctxMenuRef = useRef<ElementRef<'div'>>(null)
@@ -76,18 +77,6 @@ export default function TreeContextMenu() {
       menu.style.top = top + 'px'
    })
 
-   useEventListener(
-      document,
-      'click',
-      (e) => {
-         const contextMenu = ctxMenuRef.current
-         if (!contextMenu?.contains(e.target as Node)) {
-            closeContextMenu()
-         }
-      },
-      {},
-      shouldShowTreeContextMenu
-   )
 
    useKeyListener(
       'keydown',
@@ -114,18 +103,15 @@ export default function TreeContextMenu() {
       { shouldAddEvent: true, preventDefault: true }
    )
 
-   useKeyListener('keydown', ['Escape'], closeContextMenu, { shouldAddEvent: shouldShowTreeContextMenu })
-
    return (
       <>
          {shouldShowTreeContextMenu && (
             <>
-               <div
-                  id='tree-context-menu'
-                  className='w-64 rounded-sm border border-gray-700 fixed left-10 bg-slate-800 z-10'
-                  ref={ctxMenuRef}
+               <AppContextMenu
+                  containerClassName='w-64 rounded-sm border border-gray-700 fixed left-10 bg-slate-800 z-10'
+                  contextMenuRef={ctxMenuRef}
+                  onClose={closeContextMenu}
                >
-                  <ul>
                      {FocusedItem?.isFolder && (
                         <>
                            <li
@@ -190,9 +176,7 @@ export default function TreeContextMenu() {
                            </li>
                         </>
                      )}
-                  </ul>
-               </div>
-               {/* <div className='tree-context-menu-overlay fixed inset-0'></div> */}
+               </AppContextMenu>
             </>
          )}
       </>
