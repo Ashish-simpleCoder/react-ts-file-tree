@@ -1,5 +1,6 @@
-import type { File, Folder } from '../../FileTreeContext/Ctx.type'
-import AppLi from '../AppComponents/AppLi'
+import type { File, Folder } from 'src/FileTreeContext/Ctx.type'
+import { Else, If, Then } from 'classic-react-components'
+import AppLi from 'src/components/AppComponents/AppLi'
 import TreeFile from './TreeFile/TreeFile'
 import TreeFolder from './TreeFolder/TreeFolder'
 
@@ -8,8 +9,14 @@ export default function Tree({ item }: { item: File | Folder }) {
    return (
       <>
          <AppLi className={`px-0 py-0 ${item.parentId != 'root' ? 'pl-4' : ''}`}>
-            {item.isFolder && <TreeFolder folder={item as Folder} />}
-            {!item.isFolder && <TreeFile file={item} />}
+            <If condition={item.isFolder}>
+               <Then>
+                  <TreeFolder folder={item as Folder} />
+               </Then>
+               <Else>
+                  <TreeFile file={item} />
+               </Else>
+            </If>
          </AppLi>
       </>
    )

@@ -1,9 +1,9 @@
 import type { SVGProps } from 'react'
 
-import { useContextActions, useStateSelector } from '../../FileTreeContext/useTreeCtxState'
-import AddNewItem__Portal from '../Portals/AddNewItemInput.portal'
-import UpdateItemNameInput__Portal from '../Portals/UpdateItemNameInput.portal'
-import AppButton from '../AppComponents/AppButton'
+import { useContextActions, useStateSelector } from 'src/FileTreeContext/useTreeCtxState'
+import AddNewItem__Portal from 'src/components/Portals/AddNewItemInput.portal'
+import UpdateItemNameInput__Portal from 'src/components/Portals/UpdateItemNameInput.portal'
+import AppButton from 'src/components/AppComponents/AppButton'
 
 export default function TreeInputContainer() {
    const { toggleFolderInputVisibility, toggleFileInputVisibility, collapseTree, refreshTree } = useContextActions()

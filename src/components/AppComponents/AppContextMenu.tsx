@@ -1,6 +1,6 @@
 import type { ElementRef, ReactNode, RefObject } from 'react'
-import useKeyListener from '../../hooks/useKeyListener'
-import { useEventListener } from '../../hooks/useEventListener'
+import useKeyListener from 'src/hooks/useKeyListener'
+import { useEventListener } from 'src/hooks/useEventListener'
 
 interface AppContextMenuProps {
    children?: ReactNode
