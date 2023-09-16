@@ -4,7 +4,7 @@ interface InputProps extends ComponentProps<'input'> {
    inputRef: RefObject<ElementRef<'input'>>
 }
 export default function AppInput(props: InputProps) {
-   const { inputRef } = props
+   const { inputRef, ...rest } = props
 
-   return <input placeholder='new file' ref={inputRef} {...props} />
+   return <input ref={inputRef} {...rest} />
 }
