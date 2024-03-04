@@ -1,0 +1,1 @@
+export const getCurrentTimeStamp = () => Date.now().toString()
