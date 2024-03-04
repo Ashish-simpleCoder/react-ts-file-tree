@@ -2,7 +2,7 @@ import { ElementRef, useRef } from 'react'
 import { flushSync } from 'react-dom'
 import { If } from 'classic-react-components'
 import { useEventListener } from 'src/hooks/useEventListener'
-import { useContextActions, useStateSelector, useStateDispatch } from 'src/FileTreeContext/useTreeCtxState'
+import { useContextActions, useStateSelector, useContextDispatch } from 'src/FileTreeContext/useTreeCtxState'
 import useKeyEventListener from 'src/hooks/useKeyEventListener'
 import AppContextMenu from 'src/components/AppComponents/AppContextMenu'
 import AppLi from 'src/components/AppComponents/AppLi'
@@ -14,7 +14,7 @@ export default function TreeContextMenu() {
    const shouldShowTreeContextMenu = useStateSelector((state) => state.showTreeContextMenu)
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
    const { deleteFile, deleteFolder, expandFolder, toggleFolderInputVisibility, toggleFileInputVisibility } = useContextActions()
-   const dispatch = useStateDispatch()
+   const dispatch = useContextDispatch()
 
    const closeContextMenu = () => {
       dispatch((state) => {

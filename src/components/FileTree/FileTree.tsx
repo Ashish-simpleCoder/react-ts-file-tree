@@ -1,6 +1,6 @@
 import type { Folder } from 'src/FileTreeContext/Ctx.type'
 import { If } from 'classic-react-components'
-import { useContextActions, useStateSelector, useStateDispatch } from 'src/FileTreeContext/useTreeCtxState'
+import { useContextActions, useStateSelector, useContextDispatch } from 'src/FileTreeContext/useTreeCtxState'
 import { useEventListener } from 'src/hooks/useEventListener'
 import { getKeyState } from 'src/utils/getKeyState'
 import TreeContextMenu from 'src/components/TreeContextMenu/TreeContextMenu'
@@ -11,9 +11,11 @@ export default function FileTree() {
    const treeContainerRef = useStateSelector((state) => state.FilesListRef, false)
    const RootNode = useStateSelector((state) => state.Files.get('root') as Folder)
    const state = useStateSelector((state) => state)
-   const dispatch = useStateDispatch()
+   const dispatch = useContextDispatch()
    const { collapseFolder, expandFolder } = useContextActions()
 
+
+   // Event-Delegation modal for file/folder clicking
    // highlight logic for file/folder
    // collapse-expand logic
    useEventListener(treeContainerRef.current, 'click', (e) => {
@@ -21,15 +23,17 @@ export default function FileTree() {
       const isAnyFileInputVisible = getKeyState( state, (state) => state.shouldShowFileInput || state.shouldShowFolderInput )
       if (isAnyFileInputVisible) return
 
+      const target = e.target as HTMLElement
+
       // if clicked file-folder then proceed
       if (
-         !(e.target as HTMLElement).classList.contains('file-item') &&
-         !(e.target as HTMLElement).classList.contains('folder-item')
+         !target.classList.contains('file-item') &&
+         !target.classList.contains('folder-item')
       ) {
          return
       }
 
-      const itemId = (e.target as HTMLElement).getAttribute('data-id')
+      const itemId = target.getAttribute('data-id')
       if (!itemId) return
 
       dispatch((state) => {
@@ -52,14 +56,15 @@ export default function FileTree() {
    })
 
    return (
-      <section className='h-[100vh] w-64 border border-gray-700 bg-gray-900 fixed'>
+      <section className='h-[100vh] w-64 border-0 border-gray-700 bg-gray-800 fixed'>
          <TreeInputContainer />
+
          <ul ref={treeContainerRef} className='w-full overflow-auto h-[calc(100vh-36px)]'>
-            {/* {RootNode && <Tree item={RootNode} />} */}
             <If condition={RootNode}>
                <TreeFolder folder={RootNode} />
             </If>
          </ul>
+         
          <TreeContextMenu />
       </section>
    )

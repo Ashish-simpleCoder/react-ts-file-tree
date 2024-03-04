@@ -4,7 +4,7 @@ import { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { If } from 'classic-react-components'
 
-import { useContextActions, useStateSelector, useStateDispatch } from 'src/FileTreeContext/useTreeCtxState'
+import { useContextActions, useStateSelector, useContextDispatch } from 'src/FileTreeContext/useTreeCtxState'
 import { useEventListener } from 'src/hooks/useEventListener'
 import AppInput from 'src/components/AppComponents/AppInput'
 
@@ -25,7 +25,7 @@ export default function UpdateItemNameInput__Portal() {
          false
       )
       const Files = useStateSelector((state) => state.Files, false)
-      const TreeDispatch = useStateDispatch()
+      const TreeDispatch = useContextDispatch()
       const { hideFileInput, highlightFileOrFolder } = useContextActions()
       const [newName, setName] = useState(focusedNode?.name ?? '')
       const [error, setError] = useState<string | null>(null)
@@ -89,12 +89,12 @@ export default function UpdateItemNameInput__Portal() {
                if (error) return
                updateItemName()
             }}
-            className='w-auto h-5 relative'
+            className='w-auto h-8 relative'
             ref={elementRef}
          >
             <span>
                <AppInput
-                  className='z-10 h-5 outline-none focus:border leading-5 w-full'
+                  className='z-10 h-full outline-none focus:border leading-5 w-full'
                   placeholder='new file'
                   value={newName}
                   onChange={(e) => handleChange(e.target.value)}
