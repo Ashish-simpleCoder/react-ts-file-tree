@@ -14,8 +14,8 @@ export default function TreeInputContainer() {
    const isRenamingItem = useStateSelector((state) => state.isRenamingItem)
 
    return (
-      <div className='py-2 h-9'>
-         <div className='px-2 flex justify-end gap-1'>
+      <div className='h-10 flex items-center justify-end'>
+         <div className='px-2 flex justify-end gap-2'>
             <AppButton onClick={toggleFolderInputVisibility} title={'New folder in ' + focusedNode?.name}>
                <CodiconNewFolder />
             </AppButton>

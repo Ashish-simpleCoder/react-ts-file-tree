@@ -38,9 +38,7 @@ export default function getTreeCtxData(): StoreCtxData {
    const observers = useRef(new Set<() => void>())
 
    // get all store data
-   const get = useCallback(() => {
-      return StoreData.current
-   }, [])
+   const get = useCallback(() => StoreData.current, [])
 
    // set all store data
    const set = useCallback(
@@ -63,6 +61,7 @@ export default function getTreeCtxData(): StoreCtxData {
       observers.current.add(cb)
       return () => observers.current.delete(cb)
    }, [])
+   
 
    return { get, set, observe }
 }

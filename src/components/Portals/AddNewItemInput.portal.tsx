@@ -115,12 +115,12 @@ export default function AddNewItem__Portal() {
                   if (error) return
                   handleSaveItem()
                }}
-               className='w-auto p-1 relative'
+               className='w-auto py-1 relative'
             >
                <div className={`flex items-center ${shouldShowFileInput ? '' : 'hidden'}`}>
                   <FileIcon className='mr-2 shrink-0' />
                   <AppInput
-                     className='z-10 p-1 h-5 outline-none focus:border leading-5 w-full'
+                     className='z-10 p-1 h-8 outline-none focus:border leading-5 w-full'
                      placeholder='new file'
                      inputRef={fileInputRef}
                      onChange={(e) => handleChange(e.target.value)}
@@ -130,7 +130,7 @@ export default function AddNewItem__Portal() {
                <div className={`flex items-center ${shouldShowFolderInput ? '' : 'hidden'}`}>
                   <FolderIcon className='mr-2 shrink-0' />
                   <AppInput
-                     className='z-10 p-1 h-5 outline-none focus:border leading-5 w-full'
+                     className='z-10 p-1 h-8 outline-none focus:border leading-5 w-full'
                      placeholder='new folder'
                      inputRef={folderInputRef}
                      onChange={(e) => handleChange(e.target.value)}

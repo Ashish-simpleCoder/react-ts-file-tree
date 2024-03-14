@@ -18,7 +18,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
          <If condition={folder.id != 'root'}>
             <AppButton
                data-id={folder.id}
-               className={`folder-item w-full flex items-end p-1 ${isHighlighted ? 'bg-black' : ''}`}
+               className={`folder-item w-full flex items-center px-2 py-2 ${isHighlighted ? 'bg-black' : ''}`}
                tabIndex={-1}
             >
                <If condition={childrenIds.length > 0}>
@@ -35,6 +35,7 @@ export default function TreeFolder({ folder }: { folder: Folder }) {
                </If>
             </AppButton>
          </If>
+
          <If condition={isFolderExpanded}>
             <ul>
                {childrenIds.map((child_id) => {

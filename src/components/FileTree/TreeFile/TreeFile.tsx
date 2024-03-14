@@ -12,7 +12,7 @@ export default function TreeFile({ file }: { file: File }) {
       <>
          <AppButton
             data-id={file.id}
-            className={`file-item w-full flex items-end p-1 ${isHighlighted ? 'bg-black' : ''}`}
+            className={`file-item w-full flex items-end p-2 ${isHighlighted ? 'bg-black' : ''}`}
             tabIndex={-1}
          >
             <FileIcon height={'16px'} width={'16px'} className='shrink-0 mr-2 pointer-events-none' />

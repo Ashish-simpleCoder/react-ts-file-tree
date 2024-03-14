@@ -5,6 +5,7 @@ import type { File, Folder } from './Ctx.type'
 import { flushSync } from 'react-dom'
 
 import getTreeCtxData from './getTreeCtxData'
+import { getCurrentTimeStamp } from 'src/utils/get-current-time-stamp'
 
 export default function getContextActions(state: ReturnType<typeof getTreeCtxData>) {
    // toggle-collapse api ------------------------------------------
@@ -93,7 +94,7 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
       file.isRenaming = false
       file.newName = file.name
 
-      const id = file.id ?? Date.now().toString()
+      const id = file.id ?? getCurrentTimeStamp()
       flushSync(() => {
          state.set((state) => {
             let parentItem = state.Files.get(file.parentId || state.FocusedNode.item!.id || 'root')!
@@ -106,7 +107,9 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
             return state
          })
       })
+      // highlight newly created file
       highlightFileOrFolder(id)
+
       return id
    }
 
@@ -121,7 +124,7 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
       folder.isRenaming = false
       folder.newName = folder.name
 
-      const id = folder.id ?? Date.now().toString()
+      const id = folder.id ?? getCurrentTimeStamp()
 
       flushSync(() => {
          state.set((state) => {
@@ -135,6 +138,7 @@ export default function getContextActions(state: ReturnType<typeof getTreeCtxDat
             return state
          })
       })
+      // highlight newly created folder
       highlightFileOrFolder(id)
 
       return id

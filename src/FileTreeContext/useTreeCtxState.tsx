@@ -6,26 +6,31 @@ export function useStateSelector<SelectorOutput>(
    selector: (state: StoreCtxState) => SelectorOutput,
    watch: boolean = true
 ): SelectorOutput {
-   const Store = useTreeCtx()
-   if (!Store) throw new Error('no form store found.')
+   const store = useTreeCtx()
+
+   if (!store) throw new Error('no form store found.')
+
    if (!watch) {
-      const state = selector(Store.get())
+      const state = selector(store.get())
       return state
    }
-   const state = useSyncExternalStore(Store.observe, () => selector(Store.get()))
+
+   const state = useSyncExternalStore(store.observe, () => selector(store.get()))
    return state
 }
 
-export function useStateDispatch() {
-   const FormStore = useTreeCtx()
-   if (!FormStore) throw new Error('no form store found.')
+export function useContextDispatch() {
+   const store = useTreeCtx()
 
-   return FormStore.set
+   if (!store) throw new Error('no form store found.')
+
+   return store.set
 }
 
 export function useContextActions() {
-   const FormStore = useTreeCtx()
-   if (!FormStore) throw new Error('no form store found.')
+   const store = useTreeCtx()
+   
+   if (!store) throw new Error('no form store found.')
 
-   return FormStore.actions
+   return store.actions
 }
